@@ -46,16 +46,14 @@ android {
 }
 
 dependencies {
-    //kotlin
+    // Kotlin
     implementation(platform(libs.kotlin.bom))
-
-    //DI
+    // Hilt
     implementation(libs.hilt)
     implementation(libs.lifecycle.viewmodel.savedstate.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
-
-    //compose
+    // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
@@ -65,39 +63,38 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
-
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
-
+    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-
+    // Utils
     implementation(libs.coil.compose)
     implementation(libs.accompanist.permissions)
-
+    // Test
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-    testImplementation("org.mockito:mockito-core:4.11.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
-    testImplementation("org.mockito:mockito-inline:4.11.0")
-    testImplementation ("com.google.firebase:firebase-firestore:24.0.0 ")
-    testImplementation ("org.mockito:mockito-core:4.5.1")
-    testImplementation ("androidx.arch.core:core-testing:2.1.0")
-    testImplementation ("com.google.firebase:firebase-auth:21.0.7")
-    testImplementation ("io.mockk:mockk:1.12.0")
-
-
-    //firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-appcheck-debug")
-    implementation("com.firebaseui:firebase-ui-auth:8.0.1")
-    implementation("com.firebaseui:firebase-ui-firestore:8.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2")
-    implementation("com.google.firebase:firebase-messaging-ktx:23.3.1")
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation (libs.google.firebase.firestore)
+    testImplementation (libs.mockito.core.v451)
+    testImplementation (libs.core.testing)
+    testImplementation (libs.google.firebase.auth)
+    testImplementation (libs.mockk)
+    // Google sign in
+    implementation(libs.play.services.auth)
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.ui.firestore)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.firebase.messaging.ktx)
 }
