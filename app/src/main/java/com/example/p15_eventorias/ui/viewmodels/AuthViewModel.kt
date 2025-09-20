@@ -6,6 +6,7 @@ import com.example.p15_eventorias.repository.AuthRepository
 import com.example.p15_eventorias.repository.AuthUiState
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +27,9 @@ class AuthViewModel @Inject constructor(
             _uiState.value = AuthUiState.Authenticated(it)
         }
     }
+
+    // Expose l'utilisateur courant
+    fun currentUser(): FirebaseUser? = repo.currentUser()
 
     fun signInWithEmail(email: String, password: String) {
         viewModelScope.launch {
