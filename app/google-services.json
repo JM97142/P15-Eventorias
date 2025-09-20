@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "692744991033",
+    "project_id": "p15-eventorias-c8612",
+    "storage_bucket": "p15-eventorias-c8612.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692744991033:android:bb1de1ea478410925938e8",
+        "android_client_info": {
+          "package_name": "com.example.p15_eventorias"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692744991033-k1v30cg07u0i9edthgbne48j10r4gmr4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.p15_eventorias",
+            "certificate_hash": "ad1868805cc37bdef6adf1593c09ee68bae54aa7"
+          }
+        },
+        {
+          "client_id": "692744991033-0dqvlm07sqmlfl1jfgb2gpvhu629pgkh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCArVuKm2khkuTiPO-EUTsBxWb3-fe4AGY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692744991033-0dqvlm07sqmlfl1jfgb2gpvhu629pgkh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
