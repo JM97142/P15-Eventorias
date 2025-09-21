@@ -15,12 +15,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -69,7 +71,7 @@ fun LoginScreen(
                 onValueChange = { email = it },
                 label = { Text(stringResource(id = R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                     focusedLabelColor = Color.White,
@@ -85,7 +87,7 @@ fun LoginScreen(
                 label = { Text(stringResource(id = R.string.password)) },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
                     focusedLabelColor = Color.White,
@@ -108,7 +110,7 @@ fun LoginScreen(
                 shape = RoundedCornerShape(3.dp)
             ) {
                 Text(
-                    stringResource(id = R.string.validate_email)
+                    stringResource(id = R.string.validate)
                 )
             }
 

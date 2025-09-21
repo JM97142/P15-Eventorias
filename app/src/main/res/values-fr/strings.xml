@@ -5,6 +5,16 @@
     <string name="password">Mot de passe</string>
     <string name="signin_google">Connexion avec Google</string>
     <string name="signin_email">Connexion avec email</string>
-    <string name="validate_email">Valider</string>
+    <string name="logout">Déconnexion</string>
+    <string name="validate">Valider</string>
     <string name="cancel">Annuler</string>
+    <string name="events">Évènements</string>
+    <string name="profil">Profil</string>
+    <string name="add_event">Ajouter évènement</string>
+    <string name="profil_picture">Image profile</string>
+    <string name="user_name">Nom</string>
+    <string name="notifications">Notifications</string>
+    <string name="search">Recherche</string>
+    <string name="create_event">Créer un évènement</string>
+    <string name="arrow_back">Retour</string>
 </resources>
