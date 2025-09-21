@@ -6,13 +6,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -99,40 +97,42 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Boutons arrondis pour caméra et fichier
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Box(
+                IconButton(
+                    onClick = { /* open camera */ },
                     modifier = Modifier
                         .size(52.dp)
-                        .background(Color.White)
+                        .background(Color.Gray, CircleShape)
                 ) {
-                    IconButton(onClick = { /* open camera */ }) {
-                        Icon(
-                            Icons.Default.Favorite,
-                            contentDescription = "Camera",
-                            tint = Color.White
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Camera",
+                        tint = Color.White
+                    )
                 }
+
                 Spacer(Modifier.width(16.dp))
-                Box(
+
+                IconButton(
+                    onClick = { /* attach file */ },
                     modifier = Modifier
                         .size(52.dp)
-                        .background(Color.Red)
+                        .background(Color.Red, CircleShape)
                 ) {
-                    IconButton(onClick = { /* attach file */ }) {
-                        Icon(
-                            Icons.Default.FavoriteBorder,
-                            contentDescription = "Attachment",
-                            tint = Color.White
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Attachment",
+                        tint = Color.White
+                    )
                 }
             }
 
             Spacer(Modifier.weight(1f))
+
             Button(
                 onClick = {
                     eventViewModel.addEvent(

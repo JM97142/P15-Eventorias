@@ -1,28 +1,13 @@
 package com.example.p15_eventorias.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.p15_eventorias.R
-import com.example.p15_eventorias.model.Event
+import com.example.p15_eventorias.ui.composables.EventItem
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,34 +78,19 @@ fun HomeScreen(
         ) {
             if (events.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("No events yet")
                 }
             } else {
                 events.forEach { event ->
-                    EventItem(event)
+                    EventItem(event = event) {
+                        /* TODO: open event details */
+                    }
                     HorizontalDivider()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun EventItem(event: Event) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { /* open detail */ }
-            .padding(8.dp)
-    ) {
-        Text(event.title)
-        Spacer(Modifier.height(4.dp))
-        Text(event.description)
-        Spacer(Modifier.height(2.dp))
-        Text("${event.date} - ${event.time}")
     }
 }
