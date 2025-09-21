@@ -52,7 +52,7 @@ fun AppNavGraph(onStartGoogleSignIn: () -> Unit) {
             ProfileScreen(
                 user = authViewModel.currentUser(),
                 authViewModel = authViewModel,
-                onLogout = { navController.navigate("profil") }
+                onLogout = { navController.navigate("login") }
             )
         }
     }

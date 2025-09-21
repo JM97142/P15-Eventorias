@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">P15-Eventorias</string>
+    <string name="logo">Eventorias logo</string>
+    <string name="email">Email</string>
+    <string name="password">Mot de passe</string>
+    <string name="signin_google">Connexion avec Google</string>
+    <string name="signin_email">Connexion avec email</string>
+    <string name="validate_email">Valider</string>
+    <string name="cancel">Annuler</string>
+</resources>
