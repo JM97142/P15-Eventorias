@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
+import com.example.p15_eventorias.ui.composables.DateTimePickerRow
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,25 +70,12 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedTextField(
-                    value = date,
-                    onValueChange = { date = it },
-                    label = { Text("Date") },
-                    placeholder = { Text("MM/DD/YYYY") },
-                    modifier = Modifier.weight(1f)
-                )
-                OutlinedTextField(
-                    value = time,
-                    onValueChange = { time = it },
-                    label = { Text("Time") },
-                    placeholder = { Text("HH:MM") },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+            DateTimePickerRow(
+                date = date,
+                onDateChange = { date = it },
+                time = time,
+                onTimeChange = { time = it }
+            )
 
             OutlinedTextField(
                 value = address,
@@ -97,7 +85,7 @@ fun CreateEventScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Boutons arrondis pour caméra et fichier
+            // Boutons caméra et fichier
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center

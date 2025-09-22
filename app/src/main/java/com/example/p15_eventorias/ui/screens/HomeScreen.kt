@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.p15_eventorias.R
+import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.composables.EventItem
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 
@@ -23,7 +24,8 @@ import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 fun HomeScreen(
     eventViewModel: EventViewModel,
     onAddEvent: () -> Unit,
-    onProfile: () -> Unit
+    onProfile: () -> Unit,
+    onEventClick: (Event) -> Unit
 ) {
     val events by eventViewModel.events.collectAsState()
 
@@ -86,7 +88,7 @@ fun HomeScreen(
             } else {
                 events.forEach { event ->
                     EventItem(event = event) {
-                        /* TODO: open event details */
+                        onEventClick(event)
                     }
                     HorizontalDivider()
                 }

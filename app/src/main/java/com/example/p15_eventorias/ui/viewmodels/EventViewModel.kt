@@ -27,9 +27,6 @@ class EventViewModel : ViewModel() {
             val newEvent = event.copy(id = newEventRef.id)
 
             newEventRef.set(newEvent)
-                .addOnSuccessListener {
-                    _events.value += newEvent
-                }
                 .addOnFailureListener { e ->
                     Log.e("EventViewModel", "Error adding event", e)
                 }
