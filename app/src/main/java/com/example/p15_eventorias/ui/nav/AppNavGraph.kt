@@ -5,7 +5,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.screens.CreateEventScreen
 import com.example.p15_eventorias.ui.screens.EventDetailScreen
 import com.example.p15_eventorias.ui.screens.HomeScreen

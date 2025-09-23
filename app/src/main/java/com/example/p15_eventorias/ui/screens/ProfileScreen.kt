@@ -1,5 +1,6 @@
 package com.example.p15_eventorias.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,11 +47,18 @@ fun ProfileScreen(
                             .size(48.dp)
                             .clip(CircleShape)
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
+                )
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color.Black,
+                contentColor = Color.White
+            ) {
                 NavigationBarItem(
                     selected = false,
                     onClick = onEventsList,
@@ -69,6 +77,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = Color.Black)
                 .padding(padding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -78,7 +87,13 @@ fun ProfileScreen(
                 onValueChange = {},
                 label = { Text(stringResource(id = R.string.user_name)) },
                 enabled = false,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    disabledTextColor = Color.White,
+                    disabledLabelColor = Color.White,
+                    disabledIndicatorColor = Color.Gray,
+                    disabledContainerColor = Color.DarkGray
+                )
             )
 
             OutlinedTextField(
@@ -86,7 +101,13 @@ fun ProfileScreen(
                 onValueChange = {},
                 label = { Text(stringResource(id = R.string.email)) },
                 enabled = false,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.colors(
+                    disabledTextColor = Color.White,
+                    disabledLabelColor = Color.White,
+                    disabledIndicatorColor = Color.Gray,
+                    disabledContainerColor = Color.DarkGray
+                )
             )
 
             Spacer(Modifier.height(16.dp))
@@ -120,7 +141,10 @@ fun ProfileScreen(
                     )
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(stringResource(id = R.string.notifications))
+                Text(
+                    stringResource(id = R.string.notifications),
+                    color = Color.White
+                )
             }
         }
     }

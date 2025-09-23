@@ -1,5 +1,6 @@
 package com.example.p15_eventorias.ui.composables
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.Arrangement
@@ -11,10 +12,12 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import java.util.*
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun DateTimePickerRow(
     date: String,
@@ -37,6 +40,12 @@ fun DateTimePickerRow(
             label = { Text("Date") },
             placeholder = { Text("MM/DD/YYYY") },
             modifier = Modifier.weight(1f),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.Gray,
+            ),
             trailingIcon = {
                 IconButton(onClick = {
                     DatePickerDialog(
@@ -63,6 +72,12 @@ fun DateTimePickerRow(
             label = { Text("Time") },
             placeholder = { Text("HH:MM") },
             modifier = Modifier.weight(1f),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedLabelColor = Color.White,
+                unfocusedLabelColor = Color.Gray,
+            ),
             trailingIcon = {
                 IconButton(onClick = {
                     TimePickerDialog(

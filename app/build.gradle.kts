@@ -97,4 +97,6 @@ dependencies {
     implementation(libs.firebase.ui.firestore)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.google.firebase.appcheck.debug)
+
 }

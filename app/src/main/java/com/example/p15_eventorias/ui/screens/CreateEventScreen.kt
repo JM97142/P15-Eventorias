@@ -1,8 +1,11 @@
 package com.example.p15_eventorias.ui.screens
 
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -12,8 +15,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.composables.DateTimePickerRow
@@ -32,24 +38,44 @@ fun CreateEventScreen(
     var time by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
 
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var attachmentUri by remember { mutableStateOf<Uri?>(null) }
+
+    val context = LocalContext.current
+
+    // Launchers
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? -> imageUri = uri }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? -> attachmentUri = uri }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.create_event)) },
+                title = { Text("Create Event") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.arrow_back)
+                            contentDescription = stringResource(id = R.string.arrow_back),
+                            tint = Color.White
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Black,
+                    titleContentColor = Color.White
+                )
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
+                .background(color = Color.Black)
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -58,16 +84,26 @@ fun CreateEventScreen(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Title") },
-                placeholder = { Text("New event") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.Gray,
+                )
             )
 
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Description") },
-                placeholder = { Text("Enter your description") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.Gray,
+                )
             )
 
             DateTimePickerRow(
@@ -81,66 +117,82 @@ fun CreateEventScreen(
                 value = address,
                 onValueChange = { address = it },
                 label = { Text("Address") },
-                placeholder = { Text("Enter full address") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedLabelColor = Color.White,
+                    unfocusedLabelColor = Color.Gray,
+                )
             )
 
-            // Boutons caméra et fichier
+            // Boutons
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
                 IconButton(
-                    onClick = { /* open camera */ },
+                    onClick = { imagePickerLauncher.launch("image/*") },
                     modifier = Modifier
                         .size(52.dp)
-                        .background(Color.Gray, CircleShape)
+                        .background(Color.Gray)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Favorite,
+                        Icons.Default.Favorite,
                         contentDescription = "Camera",
-                        tint = Color.White
-                    )
+                        tint = Color.White)
                 }
 
                 Spacer(Modifier.width(16.dp))
 
                 IconButton(
-                    onClick = { /* attach file */ },
+                    onClick = { filePickerLauncher.launch("*/*") },
                     modifier = Modifier
                         .size(52.dp)
-                        .background(Color.Red, CircleShape)
+                        .background(Color.Red)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
+                        Icons.Default.FavoriteBorder,
                         contentDescription = "Attachment",
-                        tint = Color.White
-                    )
+                        tint = Color.White)
                 }
+            }
+
+            // preview image
+            imageUri?.let {
+                AsyncImage(
+                    model = it,
+                    contentDescription = "Preview",
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
             }
 
             Spacer(Modifier.weight(1f))
 
             Button(
                 onClick = {
-                    eventViewModel.addEvent(
-                        Event(
-                            title = title,
-                            description = description,
-                            date = date,
-                            time = time,
-                            address = address
-                        )
+                    val event = Event(
+                        title = title,
+                        description = description,
+                        date = date,
+                        time = time,
+                        address = address
                     )
-                    onValidate()
+                    eventViewModel.uploadFileAndCreateEvent(
+                        imageUri,
+                        attachmentUri,
+                        event,
+                        onSuccess = onValidate,
+                        onError = { e ->
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(242.dp),
+                modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red,
-                    contentColor = Color.White
-                ),
+                    contentColor = Color.White),
                 shape = RoundedCornerShape(3.dp)
             ) {
                 Text(stringResource(id = R.string.validate))
