@@ -69,6 +69,7 @@ fun AppNavGraph(onStartGoogleSignIn: () -> Unit) {
 
                 event?.let { safeEvent ->
                     EventDetailScreen(
+                        eventViewModel = eventViewModel,
                         event = safeEvent,
                         onBack = { navController.popBackStack() }
                     )

@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -31,23 +30,44 @@ fun HomeScreen(
     onEventClick: (Event) -> Unit
 ) {
     val events by eventViewModel.events.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearching by remember { mutableStateOf(false) }
+
+    // Filtre les events
+    val filteredEvents = events
+        .sortedByDescending { it.date } // tri du plus récent au plus ancien
+        .filter { it.title.contains(searchQuery, ignoreCase = true) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(id = R.string.events)) },
+                title = {
+                    if (isSearching) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Search by title") },
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White,
+                                focusedLabelColor = Color.White,
+                                unfocusedLabelColor = Color.Gray,
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text(stringResource(id = R.string.events))
+                    }
+                },
                 actions = {
-                    Icon(
-                        Icons.Default.Search,
-                        stringResource(id = R.string.search),
-                        tint = Color.White
-                    )
-                    Icon(
-                        Icons.Default.Menu,
-                        null,
-                        tint = Color.White
-                    )
-
+                    IconButton(onClick = { isSearching = !isSearching }) {
+                        Icon(
+                            Icons.Default.Search,
+                            stringResource(id = R.string.search),
+                            tint = Color.White
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black,
@@ -87,7 +107,7 @@ fun HomeScreen(
             }
         }
     ) { padding ->
-        if (events.isEmpty()) {
+        if (filteredEvents.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -106,7 +126,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                items(events) { event ->
+                items(filteredEvents) { event ->
                     EventItem(event = event) {
                         onEventClick(event)
                     }

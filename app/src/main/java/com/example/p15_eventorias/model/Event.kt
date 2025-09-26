@@ -8,5 +8,8 @@ data class Event(
     val time: String = "",
     val address: String = "",
     val imageUrl: String? = null,
-    val attachmentUrl: String? = null
+    val attachmentUrl: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val creatorUid: String = ""
 )

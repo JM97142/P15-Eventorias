@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,6 +25,8 @@ import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.composables.DateTimePickerRow
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +43,10 @@ fun CreateEventScreen(
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var attachmentUri by remember { mutableStateOf<Uri?>(null) }
+
+    var isLoading by remember { mutableStateOf(false) }
+
+    val currentUserUid = Firebase.auth.currentUser!!.uid
 
     val context = LocalContext.current
 
@@ -72,130 +79,177 @@ fun CreateEventScreen(
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .background(color = Color.Black)
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
-                label = { Text("Title") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color.Gray,
-                )
-            )
-
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color.Gray,
-                )
-            )
-
-            DateTimePickerRow(
-                date = date,
-                onDateChange = { date = it },
-                time = time,
-                onTimeChange = { time = it }
-            )
-
-            OutlinedTextField(
-                value = address,
-                onValueChange = { address = it },
-                label = { Text("Address") },
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color.Gray,
-                )
-            )
-
-            // Boutons
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+        if (isLoading) {
+            // Loader
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .background(Color.Black),
+                contentAlignment = Alignment.Center
             ) {
-                IconButton(
-                    onClick = { imagePickerLauncher.launch("image/*") },
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(Color.Gray)
-                ) {
-                    Icon(
-                        Icons.Default.Favorite,
-                        contentDescription = "Camera",
-                        tint = Color.White)
-                }
-
-                Spacer(Modifier.width(16.dp))
-
-                IconButton(
-                    onClick = { filePickerLauncher.launch("*/*") },
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(Color.Red)
-                ) {
-                    Icon(
-                        Icons.Default.FavoriteBorder,
-                        contentDescription = "Attachment",
-                        tint = Color.White)
-                }
+                CircularProgressIndicator(color = Color.Red)
             }
-
-            // preview image
-            imageUri?.let {
-                AsyncImage(
-                    model = it,
-                    contentDescription = "Preview",
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Spacer(Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    val event = Event(
-                        title = title,
-                        description = description,
-                        date = date,
-                        time = time,
-                        address = address
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .background(color = Color.Black)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.Gray,
                     )
-                    eventViewModel.uploadFileAndCreateEvent(
-                        imageUri,
-                        attachmentUri,
-                        event,
-                        onSuccess = onValidate,
-                        onError = { e ->
-                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.Gray,
+                    )
+                )
+
+                DateTimePickerRow(
+                    date = date,
+                    onDateChange = { date = it },
+                    time = time,
+                    onTimeChange = { time = it }
+                )
+
+                OutlinedTextField(
+                    value = address,
+                    onValueChange = { address = it },
+                    label = { Text("Address") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color.Gray,
+                    )
+                )
+
+                // Boutons
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = { imagePickerLauncher.launch("image/*") },
+                        modifier = Modifier
+                            .size(52.dp)
+                            .background(Color.Gray, shape = RoundedCornerShape(12.dp))
+                    ) {
+                        Icon(
+                            Icons.Default.Favorite,
+                            contentDescription = "Camera",
+                            tint = Color.White
+                        )
+                    }
+
+                    Spacer(Modifier.width(16.dp))
+
+                    IconButton(
+                        onClick = { filePickerLauncher.launch("*/*") },
+                        modifier = Modifier
+                            .size(52.dp)
+                            .background(Color.Red, shape = RoundedCornerShape(12.dp))
+                    ) {
+                        Icon(
+                            Icons.Default.FavoriteBorder,
+                            contentDescription = "Attachment",
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                // preview image
+                imageUri?.let {
+                    AsyncImage(
+                        model = it,
+                        contentDescription = "Preview",
+                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                // Save event
+                Button(
+                    onClick = {
+                        if (title.isBlank() || description.isBlank() || date.isBlank() || time.isBlank() || address.isBlank()) {
+                            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
+                                .show()
+                            return@Button
                         }
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Red,
-                    contentColor = Color.White),
-                shape = RoundedCornerShape(3.dp)
-            ) {
-                Text(stringResource(id = R.string.validate))
+
+                        isLoading = true
+
+                        val geocoder = android.location.Geocoder(context)
+                        var latitude: Double? = null
+                        var longitude: Double? = null
+
+                        try {
+                            val results = geocoder.getFromLocationName(address, 1)
+                            if (!results.isNullOrEmpty()) {
+                                latitude = results[0].latitude
+                                longitude = results[0].longitude
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                "Impossible de localiser l'adresse",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        val event = Event(
+                            title = title,
+                            description = description,
+                            date = date,
+                            time = time,
+                            address = address,
+                            latitude = latitude,
+                            longitude = longitude,
+                            creatorUid = currentUserUid
+                        )
+                        eventViewModel.uploadFileAndCreateEvent(
+                            imageUri,
+                            attachmentUri,
+                            event,
+                            onSuccess = onValidate,
+                            onError = { e ->
+                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(3.dp)
+                ) {
+                    Text(stringResource(id = R.string.validate))
+                }
             }
         }
     }

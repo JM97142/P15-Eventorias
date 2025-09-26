@@ -15,9 +15,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.ui.viewmodels.AuthViewModel
+import com.example.p15_eventorias.ui.viewmodels.NotificationsViewModel
 import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,10 +27,11 @@ import com.google.firebase.auth.FirebaseUser
 fun ProfileScreen(
     user: FirebaseUser?,
     authViewModel: AuthViewModel,
+    notificationsViewModel: NotificationsViewModel = hiltViewModel(),
     onEventsList: () -> Unit,
     onLogout: () -> Unit
 ) {
-    var notificationsEnabled by remember { mutableStateOf(true) }
+    val notificationsEnabled by notificationsViewModel.notificationsEnabled.collectAsState()
 
     Scaffold(
         topBar = {
@@ -134,7 +137,13 @@ fun ProfileScreen(
             ) {
                 Switch(
                     checked = notificationsEnabled,
-                    onCheckedChange = { notificationsEnabled = it },
+                    onCheckedChange = { isChecked ->
+                        if (isChecked) {
+                            notificationsViewModel.enableNotifications()
+                        } else {
+                            notificationsViewModel.disableNotifications()
+                        }
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Color.Red
