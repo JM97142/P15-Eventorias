@@ -73,7 +73,7 @@ fun CreateEventScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF1D1B20),
                     titleContentColor = Color.White
                 )
             )
@@ -85,7 +85,7 @@ fun CreateEventScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color.Black),
+                    .background(Color(0xFF1D1B20)),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = Color.Red)
@@ -94,7 +94,7 @@ fun CreateEventScreen(
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .background(color = Color.Black)
+                    .background(Color(0xFF1D1B20))
                     .fillMaxSize()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)

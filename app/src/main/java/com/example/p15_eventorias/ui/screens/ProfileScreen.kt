@@ -52,14 +52,14 @@ fun ProfileScreen(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF1D1B20),
                     titleContentColor = Color.White
                 )
             )
         },
         bottomBar = {
             NavigationBar(
-                containerColor = Color.Black,
+                containerColor = Color(0xFF1D1B20),
                 contentColor = Color.White
             ) {
                 NavigationBarItem(
@@ -80,7 +80,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Color.Black)
+                .background(Color(0xFF1D1B20))
                 .padding(padding)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)

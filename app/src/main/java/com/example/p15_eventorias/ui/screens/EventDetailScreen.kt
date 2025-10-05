@@ -25,7 +25,6 @@ import coil.compose.AsyncImage
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
-import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +54,7 @@ fun EventDetailScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF1D1B20),
                     titleContentColor = Color.White
                 )
             )
@@ -64,7 +63,7 @@ fun EventDetailScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .background(color = Color.Black)
+                .background(Color(0xFF1D1B20))
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -94,15 +93,6 @@ fun EventDetailScreen(
                     color = Color.White
                 )
             }
-            if (creatorPhotoUrl != null) {
-            AsyncImage(
-                model = creatorPhotoUrl,
-                contentDescription = stringResource(R.string.profil_picture),
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Warning,
                     null,
@@ -114,7 +104,6 @@ fun EventDetailScreen(
                     color = Color.White
                 )
             }
-
             if (creatorPhotoUrl != null) {
                 AsyncImage(
                     model = creatorPhotoUrl,

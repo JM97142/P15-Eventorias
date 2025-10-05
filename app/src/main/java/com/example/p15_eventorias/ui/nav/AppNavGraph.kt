@@ -10,6 +10,7 @@ import com.example.p15_eventorias.ui.screens.EventDetailScreen
 import com.example.p15_eventorias.ui.screens.HomeScreen
 import com.example.p15_eventorias.ui.screens.LoginScreen
 import com.example.p15_eventorias.ui.screens.ProfileScreen
+import com.example.p15_eventorias.ui.screens.RegisterScreen
 import com.example.p15_eventorias.ui.viewmodels.AuthViewModel
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 import com.example.p15_eventorias.utils.SignedInEventBus
@@ -32,7 +33,21 @@ fun AppNavGraph(onStartGoogleSignIn: () -> Unit) {
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
+                },
+                onGoToRegister = {
+                    navController.navigate("register")
                 }
+            )
+        }
+        composable("register") {
+            RegisterScreen(
+                viewModel = authViewModel,
+                onRegisterSuccess = {
+                    navController.navigate("profil") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
         composable("home") {

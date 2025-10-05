@@ -24,7 +24,8 @@ import com.example.p15_eventorias.ui.viewmodels.AuthViewModel
 fun LoginScreen(
     viewModel: AuthViewModel,
     onGoogleSignIn: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onGoToRegister: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -41,7 +42,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(Color(0xFF1D1B20))
             .padding(85.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -119,6 +120,20 @@ fun LoginScreen(
                 Text(
                     stringResource(id = R.string.cancel)
                 )
+            }
+            Spacer(Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Pas encore de compte ? ",
+                    color = Color.White
+                )
+                TextButton(onClick = { onGoToRegister() }) {
+                    Text("Créer un compte", color = Color.Red)
+                }
             }
         } else {
 

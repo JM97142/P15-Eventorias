@@ -70,7 +70,7 @@ fun HomeScreen(
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Black,
+                    containerColor = Color(0xFF1D1B20),
                     titleContentColor = Color.White
                 )
             )
@@ -89,7 +89,7 @@ fun HomeScreen(
         },
         bottomBar = {
             NavigationBar(
-                containerColor = Color.Black,
+                containerColor = Color(0xFF1D1B20),
                 contentColor = Color.White
             ) {
                 NavigationBarItem(
@@ -112,7 +112,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(color = Color.Black),
+                    .background(Color(0xFF1D1B20)),
                 contentAlignment = Alignment.Center
             ) {
                 Text("No events yet", color = Color.White)

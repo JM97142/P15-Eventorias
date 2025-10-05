@@ -1,5 +1,6 @@
 package com.example.p15_eventorias.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.p15_eventorias.repository.AuthRepository
@@ -49,6 +50,30 @@ class AuthViewModel @Inject constructor(
             _uiState.value = res.fold(
                 onSuccess = { AuthUiState.Authenticated(it) },
                 onFailure = { AuthUiState.Error(it.message ?: "Erreur de création") }
+            )
+        }
+    }
+
+    fun registerUser(name: String, email: String, password: String, photoUri: Uri?) {
+        viewModelScope.launch {
+            _uiState.value = AuthUiState.Loading
+
+            val createRes = repo.createWithEmail(email, password)
+            createRes.fold(
+                onSuccess = { user ->
+                    if (user != null) {
+                        val profileRes = repo.createUserProfile(user, name, photoUri)
+                        _uiState.value = profileRes.fold(
+                            onSuccess = { AuthUiState.Authenticated(user) },
+                            onFailure = { AuthUiState.Error(it.message ?: "Erreur création profil") }
+                        )
+                    } else {
+                        _uiState.value = AuthUiState.Error("Utilisateur null")
+                    }
+                },
+                onFailure = { e ->
+                    _uiState.value = AuthUiState.Error(e.message ?: "Erreur création compte")
+                }
             )
         }
     }
