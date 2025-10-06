@@ -81,38 +81,56 @@ fun EventDetailScreen(
                 )
             }
 
-            // Date et heure
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.DateRange,
-                    null,
-                    tint = Color.White
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    event.date,
-                    color = Color.White
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                // Colonne Date + Heure à gauche
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.DateRange,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = event.date,
+                            color = Color.White
+                        )
+                    }
+
+                    Spacer(Modifier.height(4.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Warning,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = event.time,
+                            color = Color.White
+                        )
+                    }
+                }
+
+                // Photo de l'utilisateur
+                if (creatorPhotoUrl != null) {
+                    AsyncImage(
+                        model = creatorPhotoUrl,
+                        contentDescription = stringResource(R.string.profil_picture),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+                }
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Warning,
-                    null,
-                    tint = Color.White
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    event.time,
-                    color = Color.White
-                )
-            }
-            if (creatorPhotoUrl != null) {
-                AsyncImage(
-                    model = creatorPhotoUrl,
-                    contentDescription = stringResource(R.string.profil_picture),
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
-            }
+
             Spacer(Modifier.height(6.dp))
 
             // Description
@@ -153,7 +171,8 @@ fun EventDetailScreen(
                         model = mapUrl,
                         contentDescription = "Map of ${event.address}",
                         modifier = Modifier
-                            .size(120.dp)
+                            .width(149.dp)
+                            .height(72.dp)
                             .clip(MaterialTheme.shapes.small),
                         contentScale = ContentScale.Crop
                     )

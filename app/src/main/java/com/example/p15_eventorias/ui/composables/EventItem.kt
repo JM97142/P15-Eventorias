@@ -1,21 +1,38 @@
 package com.example.p15_eventorias.ui.composables
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.p15_eventorias.model.Event
+import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 
 @Composable
 fun EventItem(
     event: Event,
+    eventViewModel: EventViewModel = hiltViewModel(),
     onClick: () -> Unit = {}
 ) {
+    var creatorPhotoUrl by remember { mutableStateOf<String?>(null) }
+
+    // Récupère la photo de l’auteur depuis Firestore
+    LaunchedEffect(event.creatorUid) {
+        val url = eventViewModel.getUserByUid(event.creatorUid)
+        creatorPhotoUrl = url
+    }
+
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -29,6 +46,19 @@ fun EventItem(
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Photo du créateur
+            if (creatorPhotoUrl != null) {
+                AsyncImage(
+                    model = creatorPhotoUrl,
+                    contentDescription = "Creator photo",
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(start = 8.dp)
+                        .clip(CircleShape)
+                )
+            } else {
+                Spacer(Modifier.width(8.dp))
+            }
             // Partie texte
             Column(
                 modifier = Modifier
@@ -53,6 +83,7 @@ fun EventItem(
                     model = event.imageUrl,
                     contentDescription = "Event image",
                     modifier = Modifier
+                        .width(136.dp)
                         .weight(1f)
                         .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop

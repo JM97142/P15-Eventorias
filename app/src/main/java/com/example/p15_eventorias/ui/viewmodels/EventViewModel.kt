@@ -50,21 +50,30 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         return withContext(Dispatchers.IO) {
             try {
                 val urlAddress = URLEncoder.encode(address, "UTF-8")
-                val url = URL("https://nominatim.openstreetmap.org/search?format=json&q=$urlAddress")
+                val url = URL("https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=$urlAddress")
 
-                val connection = url.openConnection() as HttpsURLConnection
-                connection.requestMethod = "GET"
-                connection.setRequestProperty("User-Agent", "P15Eventorias/1.0 (your_email@example.com)")
-                connection.connect()
+                val connection = (url.openConnection() as HttpsURLConnection).apply {
+                    requestMethod = "GET"
+                    setRequestProperty("User-Agent", "EventoriasApp/1.0 (contact@eventorias.com)")
+                    connectTimeout = 5000
+                    readTimeout = 5000
+                }
 
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 val jsonArray = JSONArray(response)
 
                 if (jsonArray.length() > 0) {
                     val obj = jsonArray.getJSONObject(0)
-                    val lat = obj.getDouble("lat")
-                    val lon = obj.getDouble("lon")
-                    return@withContext Pair(lat, lon)
+
+                    // Récupération des valeurs String
+                    val latStr = obj.getString("lat")
+                    val lonStr = obj.getString("lon")
+
+                    // Conversion sécurisée en Double
+                    val lat = latStr.toDoubleOrNull()
+                    val lon = lonStr.toDoubleOrNull()
+
+                    if (lat != null && lon != null) Pair(lat, lon) else null
                 } else {
                     null
                 }

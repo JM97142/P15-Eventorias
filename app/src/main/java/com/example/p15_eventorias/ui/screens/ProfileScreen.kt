@@ -33,6 +33,21 @@ fun ProfileScreen(
 ) {
     val notificationsEnabled by notificationsViewModel.notificationsEnabled.collectAsState()
 
+    var userName by remember { mutableStateOf(user?.displayName ?: "") }
+    var userPhotoUrl by remember { mutableStateOf(user?.photoUrl?.toString()) }
+
+    // Récupération du profil Firestore (si email/password)
+    LaunchedEffect(user?.uid) {
+        user?.uid?.let { uid ->
+            authViewModel.getUserByUid(uid) { url ->
+                userPhotoUrl = url
+            }
+            authViewModel.getUserNameByUid(uid) { name ->
+                if (!name.isNullOrBlank()) userName = name
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -44,7 +59,7 @@ fun ProfileScreen(
                 },
                 actions = {
                     AsyncImage(
-                        model = user?.photoUrl,
+                        model = userPhotoUrl,
                         contentDescription = stringResource(R.string.profil_picture),
                         modifier = Modifier
                             .size(48.dp)
@@ -66,13 +81,27 @@ fun ProfileScreen(
                     selected = false,
                     onClick = onEventsList,
                     label = { Text("Events") },
-                    icon = { Icon(Icons.Default.DateRange, null) }
+                    icon = { Icon(Icons.Default.DateRange, null) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        unselectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color.Gray
+                    )
                 )
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
                     label = { Text("Profile") },
-                    icon = { Icon(Icons.Default.Person, null) }
+                    icon = { Icon(Icons.Default.Person, null) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        unselectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color.Gray
+                    )
                 )
             }
         }
@@ -86,7 +115,7 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = user?.displayName ?: "",
+                value = userName,
                 onValueChange = {},
                 label = { Text(stringResource(id = R.string.user_name)) },
                 enabled = false,

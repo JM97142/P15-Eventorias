@@ -96,13 +96,27 @@ fun HomeScreen(
                     selected = true,
                     onClick = {},
                     label = { Text("Events") },
-                    icon = { Icon(Icons.Default.DateRange, null) }
+                    icon = { Icon(Icons.Default.DateRange, null) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        unselectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color.Gray
+                    )
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onProfile,
                     label = { Text("Profile") },
-                    icon = { Icon(Icons.Default.Person, null) }
+                    icon = { Icon(Icons.Default.Person, null) },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        unselectedIconColor = Color.White,
+                        selectedTextColor = Color.White,
+                        unselectedTextColor = Color.White,
+                        indicatorColor = Color.Gray
+                    )
                 )
             }
         }
@@ -122,7 +136,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
-                    .background(color = Color.Black),
+                    .background(Color(0xFF1D1B20)),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {

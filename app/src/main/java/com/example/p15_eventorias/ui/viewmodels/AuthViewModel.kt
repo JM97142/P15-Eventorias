@@ -8,6 +8,7 @@ import com.example.p15_eventorias.repository.AuthUiState
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,6 +77,24 @@ class AuthViewModel @Inject constructor(
                 }
             )
         }
+    }
+
+    fun getUserByUid(uid: String, onResult: (String?) -> Unit) {
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                onResult(doc.getString("photoUrl"))
+            }
+            .addOnFailureListener { onResult(null) }
+    }
+
+    fun getUserNameByUid(uid: String, onResult: (String?) -> Unit) {
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                onResult(doc.getString("name"))
+            }
+            .addOnFailureListener { onResult(null) }
     }
 
     fun handleGoogleSignInTask(task: Task<GoogleSignInAccount>?) {
