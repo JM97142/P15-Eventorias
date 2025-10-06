@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -49,12 +51,18 @@ fun ProfileScreen(
     }
 
     Scaffold(
+        modifier = Modifier.semantics {
+            contentDescription = "Écran de profil utilisateur"
+        },
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         stringResource(R.string.profil),
-                        color = Color.White
+                        color = Color.White,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Titre de l'écran : Profil utilisateur"
+                        }
                     )
                 },
                 actions = {
@@ -64,6 +72,9 @@ fun ProfileScreen(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
+                            .semantics {
+                                contentDescription = "Photo de profil de l’utilisateur"
+                            }
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -75,7 +86,10 @@ fun ProfileScreen(
         bottomBar = {
             NavigationBar(
                 containerColor = Color(0xFF1D1B20),
-                contentColor = Color.White
+                contentColor = Color.White,
+                modifier = Modifier.semantics {
+                    contentDescription = "Barre de navigation du profil"
+                }
             ) {
                 NavigationBarItem(
                     selected = false,
@@ -88,7 +102,10 @@ fun ProfileScreen(
                         selectedTextColor = Color.White,
                         unselectedTextColor = Color.White,
                         indicatorColor = Color.Gray
-                    )
+                    ),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Onglet Événements. Appuyer pour revenir à la liste des événements."
+                    }
                 )
                 NavigationBarItem(
                     selected = true,
@@ -101,7 +118,10 @@ fun ProfileScreen(
                         selectedTextColor = Color.White,
                         unselectedTextColor = Color.White,
                         indicatorColor = Color.Gray
-                    )
+                    ),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Onglet Profil sélectionné"
+                    }
                 )
             }
         }
@@ -111,7 +131,10 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .background(Color(0xFF1D1B20))
                 .padding(padding)
-                .padding(16.dp),
+                .padding(16.dp)
+                .semantics {
+                    contentDescription = "Informations de profil de l’utilisateur"
+                },
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
@@ -119,7 +142,11 @@ fun ProfileScreen(
                 onValueChange = {},
                 label = { Text(stringResource(id = R.string.user_name)) },
                 enabled = false,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = "Nom de l’utilisateur : $userName"
+                    },
                 colors = TextFieldDefaults.colors(
                     disabledTextColor = Color.White,
                     disabledLabelColor = Color.White,
@@ -133,7 +160,11 @@ fun ProfileScreen(
                 onValueChange = {},
                 label = { Text(stringResource(id = R.string.email)) },
                 enabled = false,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = "Adresse email de l’utilisateur : ${user?.email ?: "Non disponible"}"
+                    },
                 colors = TextFieldDefaults.colors(
                     disabledTextColor = Color.White,
                     disabledLabelColor = Color.White,
@@ -151,7 +182,10 @@ fun ProfileScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .width(242.dp),
+                    .width(242.dp)
+                    .semantics {
+                        contentDescription = "Bouton de déconnexion. Appuyer pour se déconnecter du compte."
+                    },
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White,
                     containerColor = Color.Red
@@ -162,7 +196,13 @@ fun ProfileScreen(
             }
 
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.semantics {
+                    contentDescription = if (notificationsEnabled)
+                        "Notifications activées. Appuyer pour les désactiver."
+                    else
+                        "Notifications désactivées. Appuyer pour les activer."
+                }
             ) {
                 Switch(
                     checked = notificationsEnabled,

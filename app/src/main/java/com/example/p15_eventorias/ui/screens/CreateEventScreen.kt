@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.p15_eventorias.R
@@ -60,11 +62,19 @@ fun CreateEventScreen(
     ) { uri: Uri? -> attachmentUri = uri }
 
     Scaffold(
+        modifier = Modifier.semantics {
+            contentDescription = "Écran de création d’un nouvel événement"
+        },
         topBar = {
             TopAppBar(
-                title = { Text("Create Event") },
+                title = { Text(stringResource(id = R.string.create_event)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Bouton retour. Appuyer pour revenir à la liste des événements."
+                        }
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.arrow_back),
@@ -85,7 +95,8 @@ fun CreateEventScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color(0xFF1D1B20)),
+                    .background(Color(0xFF1D1B20))
+                    .semantics { contentDescription = "Chargement en cours" },
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = Color.Red)
@@ -96,14 +107,17 @@ fun CreateEventScreen(
                     .padding(padding)
                     .background(Color(0xFF1D1B20))
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .semantics { contentDescription = "Formulaire de création d’événement" },
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Title") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = "Champ de texte : titre de l’événement" },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -116,7 +130,9 @@ fun CreateEventScreen(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text("Description") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = "Champ de texte : description de l’événement" },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -136,7 +152,9 @@ fun CreateEventScreen(
                     value = address,
                     onValueChange = { address = it },
                     label = { Text("Address") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = "Champ de texte : adresse de l’événement" },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -147,7 +165,9 @@ fun CreateEventScreen(
 
                 // Boutons
                 Row(
-                    Modifier.fillMaxWidth(),
+                    Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = "Boutons pour ajouter une image ou une pièce jointe" },
                     horizontalArrangement = Arrangement.Center
                 ) {
                     IconButton(
@@ -155,10 +175,11 @@ fun CreateEventScreen(
                         modifier = Modifier
                             .size(52.dp)
                             .background(Color.Gray, shape = RoundedCornerShape(12.dp))
+                            .semantics { contentDescription = "Bouton pour choisir une image" }
                     ) {
                         Icon(
                             Icons.Default.Favorite,
-                            contentDescription = "Camera",
+                            contentDescription = null,
                             tint = Color.White
                         )
                     }
@@ -170,10 +191,11 @@ fun CreateEventScreen(
                         modifier = Modifier
                             .size(52.dp)
                             .background(Color.Red, shape = RoundedCornerShape(12.dp))
+                            .semantics { contentDescription = "Bouton pour ajouter une pièce jointe" }
                     ) {
                         Icon(
                             Icons.Default.FavoriteBorder,
-                            contentDescription = "Attachment",
+                            contentDescription = null,
                             tint = Color.White
                         )
                     }
@@ -184,7 +206,10 @@ fun CreateEventScreen(
                     AsyncImage(
                         model = it,
                         contentDescription = "Preview",
-                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .semantics { contentDescription = "Aperçu de l’image sélectionnée" },
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -241,7 +266,9 @@ fun CreateEventScreen(
                             }
                         )
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics { contentDescription = "Bouton valider. Appuyer pour créer l’événement." },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Red,
                         contentColor = Color.White

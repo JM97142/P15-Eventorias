@@ -27,7 +27,7 @@ import com.example.p15_eventorias.ui.viewmodels.AuthViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    viewModel: AuthViewModel,
+    authViewModel: AuthViewModel,
     onBack: () -> Unit,
     onRegisterSuccess: () -> Unit
 ) {
@@ -36,7 +36,7 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by authViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
     // Launcher pour sélectionner une photo
@@ -54,7 +54,7 @@ fun RegisterScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Register") },
+                title = { Text(stringResource(id = R.string.register)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -110,7 +110,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
+                label = { Text(stringResource(id = R.string.email)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -123,7 +123,7 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(id = R.string.password)) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -169,7 +169,7 @@ fun RegisterScreen(
                         Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
-                    viewModel.registerUser(name, email, password, photoUri)
+                    authViewModel.registerUser(name, email, password, photoUri)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
@@ -178,7 +178,7 @@ fun RegisterScreen(
                 ),
                 shape = RoundedCornerShape(3.dp)
             ) {
-                Text("Register")
+                Text(stringResource(id = R.string.register))
             }
 
             if (uiState is AuthUiState.Error) {

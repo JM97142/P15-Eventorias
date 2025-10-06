@@ -27,7 +27,7 @@ fun AppNavGraph(onStartGoogleSignIn: () -> Unit) {
     ) {
         composable("login") {
             LoginScreen(
-                viewModel = authViewModel,
+                authViewModel = authViewModel,
                 onGoogleSignIn = { onStartGoogleSignIn() },
                 onLoginSuccess = {
                     navController.navigate("home") {
@@ -41,7 +41,7 @@ fun AppNavGraph(onStartGoogleSignIn: () -> Unit) {
         }
         composable("register") {
             RegisterScreen(
-                viewModel = authViewModel,
+                authViewModel = authViewModel,
                 onRegisterSuccess = {
                     navController.navigate("profil") {
                         popUpTo("login") { inclusive = true }

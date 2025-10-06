@@ -20,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.p15_eventorias.R
@@ -41,14 +43,29 @@ fun EventDetailScreen(
     }
 
     Scaffold(
+        modifier = Modifier.semantics {
+            contentDescription = "Écran de détails de l’événement ${event.title}"
+        },
         topBar = {
             TopAppBar(
-                title = { Text(event.title) },
+                title = {
+                    Text(
+                        event.title,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Titre de l’événement : ${event.title}"
+                        }
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Bouton retour. Appuyer pour revenir à la liste des événements."
+                        }
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.arrow_back),
+                            null,
                             tint = Color.White
                         )
                     }
@@ -65,14 +82,17 @@ fun EventDetailScreen(
                 .padding(padding)
                 .background(Color(0xFF1D1B20))
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .semantics {
+                    contentDescription = "Contenu détaillé de l’événement ${event.title}"
+                },
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Image principale
             if (event.imageUrl != null) {
                 AsyncImage(
                     model = event.imageUrl,
-                    contentDescription = event.title,
+                    contentDescription = "Image de l’événement ${event.title}",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(364.dp)
@@ -84,13 +104,21 @@ fun EventDetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 8.dp)
+                    .semantics {
+                        contentDescription = "Informations sur la date, l’heure et le créateur de l’événement"
+                    },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 // Colonne Date + Heure à gauche
                 Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Date de l’événement : ${event.date}"
+                        }
+                    ) {
                         Icon(
                             Icons.Default.DateRange,
                             contentDescription = null,
@@ -105,7 +133,12 @@ fun EventDetailScreen(
 
                     Spacer(Modifier.height(4.dp))
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.semantics {
+                            contentDescription = "Heure de l’événement : ${event.time}"
+                        }
+                    ) {
                         Icon(
                             Icons.Default.Warning,
                             contentDescription = null,
@@ -127,6 +160,10 @@ fun EventDetailScreen(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
+                            .semantics {
+                                contentDescription =
+                                    "Photo du créateur de l’événement ${event.title}"
+                            }
                     )
                 }
             }
@@ -137,17 +174,24 @@ fun EventDetailScreen(
             Text(
                 text = event.description,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier.semantics {
+                    contentDescription = "Description de l’événement : ${event.description}"
+                }
             )
             Spacer(Modifier.height(16.dp))
 
             // Adresse + Carte
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics { contentDescription = "Localisation de l’événement" },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { contentDescription = "Adresse : ${event.address}" }
                 ) {
                     Text(
                         text = event.address,

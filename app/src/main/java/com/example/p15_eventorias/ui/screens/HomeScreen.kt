@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
@@ -39,6 +41,9 @@ fun HomeScreen(
         .filter { it.title.contains(searchQuery, ignoreCase = true) }
 
     Scaffold(
+        modifier = Modifier.semantics {
+            contentDescription = "Écran d'accueil affichant la liste des événements"
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -48,23 +53,38 @@ fun HomeScreen(
                             onValueChange = { searchQuery = it },
                             placeholder = { Text("Search by title") },
                             singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = "Champ de recherche pour filtrer les événements par titre"
+                                },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.White,
                                 unfocusedTextColor = Color.White,
                                 focusedLabelColor = Color.White,
                                 unfocusedLabelColor = Color.Gray,
-                            ),
-                            modifier = Modifier.fillMaxWidth()
+                            )
                         )
                     } else {
-                        Text(stringResource(id = R.string.events))
+                        Text(
+                            stringResource(id = R.string.events),
+                            modifier = Modifier.semantics {
+                                contentDescription = "Titre : Liste des événements"
+                            }
+                        )
                     }
                 },
                 actions = {
-                    IconButton(onClick = { isSearching = !isSearching }) {
+                    IconButton(
+                        onClick = { isSearching = !isSearching },
+                        modifier = Modifier.semantics {
+                            contentDescription =
+                                if (isSearching) "Fermer la recherche" else "Ouvrir la recherche d'événements"
+                        }
+                    ) {
                         Icon(
                             Icons.Default.Search,
-                            stringResource(id = R.string.search),
+                            null,
                             tint = Color.White
                         )
                     }
@@ -79,23 +99,26 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = onAddEvent,
                 contentColor = Color.White,
-                containerColor = Color.Red
+                containerColor = Color.Red,
+                modifier = Modifier.semantics {
+                    contentDescription = "Bouton pour ajouter un nouvel événement"
+                }
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    stringResource(id = R.string.add_event)
-                )
+                Icon(Icons.Default.Add, null)
             }
         },
         bottomBar = {
             NavigationBar(
                 containerColor = Color(0xFF1D1B20),
-                contentColor = Color.White
+                contentColor = Color.White,
+                modifier = Modifier.semantics {
+                    contentDescription = "Barre de navigation principale"
+                }
             ) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
-                    label = { Text("Events") },
+                    label = { Text(stringResource(id = R.string.events)) },
                     icon = { Icon(Icons.Default.DateRange, null) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
@@ -103,12 +126,15 @@ fun HomeScreen(
                         selectedTextColor = Color.White,
                         unselectedTextColor = Color.White,
                         indicatorColor = Color.Gray
-                    )
+                    ),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Onglet Événements sélectionné"
+                    }
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = onProfile,
-                    label = { Text("Profile") },
+                    label = { Text(stringResource(id = R.string.profil)) },
                     icon = { Icon(Icons.Default.Person, null) },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = Color.White,
@@ -116,7 +142,10 @@ fun HomeScreen(
                         selectedTextColor = Color.White,
                         unselectedTextColor = Color.White,
                         indicatorColor = Color.Gray
-                    )
+                    ),
+                    modifier = Modifier.semantics {
+                        contentDescription = "Onglet Profil. Appuyer pour afficher les informations du profil utilisateur"
+                    }
                 )
             }
         }
@@ -126,7 +155,12 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .background(Color(0xFF1D1B20)),
+                    .background(Color(0xFF1D1B20))
+                    .semantics {
+                        contentDescription =
+                            if (events.isEmpty()) "Aucun événement disponible pour le moment"
+                            else "Aucun événement ne correspond à votre recherche"
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text("No events yet", color = Color.White)
@@ -136,7 +170,10 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(padding)
                     .fillMaxSize()
-                    .background(Color(0xFF1D1B20)),
+                    .background(Color(0xFF1D1B20))
+                    .semantics {
+                        contentDescription = "Liste des événements disponibles"
+                    },
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {
@@ -144,7 +181,6 @@ fun HomeScreen(
                     EventItem(event = event) {
                         onEventClick(event)
                     }
-                    HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
                 }
             }
         }
