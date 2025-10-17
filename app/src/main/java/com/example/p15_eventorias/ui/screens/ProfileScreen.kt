@@ -1,5 +1,8 @@
 package com.example.p15_eventorias.ui.screens
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -31,7 +35,8 @@ fun ProfileScreen(
     authViewModel: AuthViewModel,
     notificationsViewModel: NotificationsViewModel = hiltViewModel(),
     onEventsList: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    isTest: Boolean = false
 ) {
     val notificationsEnabled by notificationsViewModel.notificationsEnabled.collectAsState()
 
@@ -47,6 +52,16 @@ fun ProfileScreen(
             authViewModel.getUserNameByUid(uid) { name ->
                 if (!name.isNullOrBlank()) userName = name
             }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            notificationsViewModel.enableNotifications()
+        } else {
+            notificationsViewModel.disableNotifications()
         }
     }
 
@@ -205,10 +220,15 @@ fun ProfileScreen(
                 }
             ) {
                 Switch(
+                    modifier = Modifier.testTag("notif_switch"),
                     checked = notificationsEnabled,
                     onCheckedChange = { isChecked ->
                         if (isChecked) {
-                            notificationsViewModel.enableNotifications()
+                            if (!isTest && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                notificationsViewModel.enableNotifications()
+                            }
                         } else {
                             notificationsViewModel.disableNotifications()
                         }

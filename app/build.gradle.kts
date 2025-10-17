@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +10,15 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        load(FileInputStream(file))
+    }
+}
+val apiKey = localProperties.getProperty("API_KEY_GOOGLE") ?: ""
+val apiMapsKey = localProperties.getProperty("API_KEY_GOOGLE_MAPS") ?: ""
+
 android {
     namespace = "com.example.p15_eventorias"
     compileSdk = 35
@@ -14,11 +26,15 @@ android {
     defaultConfig {
         applicationId = "com.example.p15_eventorias"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "GOOGLE_API_KEY", "\"$apiKey\"")
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"$apiMapsKey\"")
     }
 
     buildTypes {
@@ -42,6 +58,20 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
+    }
+    packaging {
+        resources {
+            excludes.addAll(
+                listOf(
+                    "META-INF/LICENSE.md",
+                    "META-INF/LICENSE-notice.md",
+                    "META-INF/NOTICE.md",
+                    "META-INF/LICENSE.txt",
+                    "META-INF/NOTICE.txt"
+                )
+            )
+        }
     }
 }
 
@@ -51,6 +81,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt)
     implementation(libs.lifecycle.viewmodel.savedstate.android)
+    implementation(libs.ui.test.junit4.android)
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     // Compose
@@ -65,6 +96,7 @@ dependencies {
     debugImplementation(libs.compose.ui.test.manifest)
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.material.icons.extended)
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     // Utils
@@ -74,6 +106,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.ui.test)
+    androidTestImplementation(libs.mockk.android)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
@@ -83,6 +117,7 @@ dependencies {
     testImplementation (libs.core.testing)
     testImplementation (libs.google.firebase.auth)
     testImplementation (libs.mockk)
+    debugImplementation(libs.ui.test.manifest)
     // Google sign in
     implementation(libs.play.services.auth)
     // Firebase

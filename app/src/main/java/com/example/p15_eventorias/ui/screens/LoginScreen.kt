@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -142,13 +141,13 @@ fun LoginScreen(
             }
             Spacer(Modifier.height(16.dp))
 
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .semantics {
                         contentDescription = "Lien pour créer un compte si vous n'en avez pas encore"
                     },
-                horizontalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "Pas encore de compte ? ",
@@ -181,8 +180,10 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
-                        Icons.Default.Build,
-                        contentDescription = stringResource(id = R.string.signin_google)
+                        painter = painterResource(id = R.drawable.ic_google),
+                        contentDescription = stringResource(id = R.string.signin_google),
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.Unspecified
                     )
                     Text(
                         stringResource(id = R.string.signin_google)
@@ -232,13 +233,15 @@ fun LoginScreen(
 
         if (uiState is AuthUiState.Error) {
             Spacer(Modifier.height(16.dp))
-            Text(
-                (uiState as AuthUiState.Error).message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.semantics {
-                    contentDescription = "Erreur : ${(uiState as AuthUiState.Error).message}"
-                }
-            )
+            (uiState as AuthUiState.Error).message?.let {
+                Text(
+                    it,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.semantics {
+                        contentDescription = "Erreur : $it"
+                    }
+                )
+            }
         }
     }
 }

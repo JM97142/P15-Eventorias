@@ -6,5 +6,5 @@ sealed class AuthUiState {
     data object Unauthenticated : AuthUiState()
     data object Loading : AuthUiState()
     data class Authenticated(val user: FirebaseUser?) : AuthUiState()
-    data class Error(val message: String) : AuthUiState()
+    data class Error(val message: String?) : AuthUiState()
 }

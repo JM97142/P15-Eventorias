@@ -13,7 +13,7 @@ firebaseUiFirestore = "8.0.1"
 hiltNavigationCompose = "1.2.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
-espressoCore = "3.5.1"
+espressoCore = "3.5.0"
 kotlinxCoroutinesAndroid = "1.8.0"
 kotlinxCoroutinesPlayServices = "1.5.2"
 kotlinxCoroutinesTest = "1.8.1"
@@ -22,16 +22,19 @@ hilt = "2.49"
 kotlin = "1.9.23"
 compose = "2024.04.00"
 activityCompose = "1.8.2"
+materialIconsExtended = "1.6.0"
 mockitoCore = "4.11.0"
 mockitoCoreVersion = "4.5.1"
 mockitoInline = "4.11.0"
 mockitoKotlin = "4.1.0"
-mockk = "1.12.0"
+mockk = "1.13.12"
+mockkAndroid = "1.13.12"
 navigationCompose = "2.7.7"
 ksp = "1.9.23-1.0.20"
 lifecycleRuntimeCompose = "2.7.0"
 lifecycleViewmodelSavedstateAndroid = "2.9.3"
 playServicesAuth = "20.5.0"
+uiTestJunit4Android = "1.9.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -69,15 +72,20 @@ compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-core-v451 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeCompose" }
 lifecycle-viewmodel-savedstate-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate-android", version.ref = "lifecycleViewmodelSavedstateAndroid" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+ui-test = { module = "androidx.compose.ui:ui-test" }
+ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
+ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
 
 [plugins]

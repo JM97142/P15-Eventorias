@@ -22,16 +22,23 @@ import java.net.URLEncoder
 import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 
-class EventViewModel(application: Application) : AndroidViewModel(application) {
+open class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
 
     private val _events = MutableStateFlow<List<Event>>(emptyList())
-    val events: StateFlow<List<Event>> = _events.asStateFlow()
+    open val events: StateFlow<List<Event>> = _events.asStateFlow()
 
     init {
-        fetchEvents()
+        FirebaseAuth.getInstance().addAuthStateListener { auth ->
+            val user = auth.currentUser
+            if (user != null) {
+                fetchEvents()
+            } else {
+                Log.d("EventViewModel", "Utilisateur déconnecté : pas de fetchEvents()")
+            }
+        }
     }
 
     private suspend fun addEvent(event: Event) {
@@ -133,7 +140,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun getUserByUid(uid: String): String? {
+    open suspend fun getUserByUid(uid: String): String? {
         return try {
             val snapshot = db.collection("users")
                 .document(uid)

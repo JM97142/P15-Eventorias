@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddAPhoto
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
@@ -35,7 +37,8 @@ import com.google.firebase.auth.auth
 fun CreateEventScreen(
     eventViewModel: EventViewModel,
     onValidate: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    isTest: Boolean = false
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -48,7 +51,7 @@ fun CreateEventScreen(
 
     var isLoading by remember { mutableStateOf(false) }
 
-    val currentUserUid = Firebase.auth.currentUser!!.uid
+    val currentUserUid = Firebase.auth.currentUser?.uid ?: "test_uid"
 
     val context = LocalContext.current
 
@@ -145,7 +148,8 @@ fun CreateEventScreen(
                     date = date,
                     onDateChange = { date = it },
                     time = time,
-                    onTimeChange = { time = it }
+                    onTimeChange = { time = it },
+                    isTest = isTest
                 )
 
                 OutlinedTextField(
@@ -174,13 +178,13 @@ fun CreateEventScreen(
                         onClick = { imagePickerLauncher.launch("image/*") },
                         modifier = Modifier
                             .size(52.dp)
-                            .background(Color.Gray, shape = RoundedCornerShape(12.dp))
+                            .background(Color.White, shape = RoundedCornerShape(12.dp))
                             .semantics { contentDescription = "Bouton pour choisir une image" }
                     ) {
                         Icon(
-                            Icons.Default.Favorite,
+                            Icons.Default.AddAPhoto,
                             contentDescription = null,
-                            tint = Color.White
+                            tint = Color.Black
                         )
                     }
 
@@ -194,7 +198,7 @@ fun CreateEventScreen(
                             .semantics { contentDescription = "Bouton pour ajouter une pièce jointe" }
                     ) {
                         Icon(
-                            Icons.Default.FavoriteBorder,
+                            Icons.Default.AttachFile,
                             contentDescription = null,
                             tint = Color.White
                         )

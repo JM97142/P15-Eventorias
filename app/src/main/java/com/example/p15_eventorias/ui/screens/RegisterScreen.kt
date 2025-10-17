@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,10 @@ fun RegisterScreen(
             TopAppBar(
                 title = { Text(stringResource(id = R.string.register)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(
+                        onClick = onBack,
+                        modifier = Modifier.testTag("BackButton")
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.arrow_back),
@@ -81,7 +85,9 @@ fun RegisterScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.Red)
+                CircularProgressIndicator(
+                    color = Color.Red
+                )
             }
             return@Scaffold
         }
@@ -171,7 +177,9 @@ fun RegisterScreen(
                     }
                     authViewModel.registerUser(name, email, password, photoUri)
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("RegisterButton"),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Red,
                     contentColor = Color.White
@@ -182,11 +190,13 @@ fun RegisterScreen(
             }
 
             if (uiState is AuthUiState.Error) {
-                Text(
-                    text = (uiState as AuthUiState.Error).message,
-                    color = Color.Red,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                (uiState as AuthUiState.Error).message?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
         }
     }

@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.p15_eventorias.BuildConfig
 import com.example.p15_eventorias.R
 import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
@@ -36,6 +37,8 @@ fun EventDetailScreen(
     onBack: () -> Unit
 ) {
     var creatorPhotoUrl by remember { mutableStateOf<String?>(null) }
+    val apiMapsKey = BuildConfig.GOOGLE_MAPS_API_KEY
+
 
     LaunchedEffect(event.creatorUid) {
         val url = event.creatorUid.let { eventViewModel.getUserByUid(it) }
@@ -140,7 +143,7 @@ fun EventDetailScreen(
                         }
                     ) {
                         Icon(
-                            Icons.Default.Warning,
+                            Icons.Default.AccessTime,
                             contentDescription = null,
                             tint = Color.White
                         )
@@ -204,12 +207,11 @@ fun EventDetailScreen(
 
                 // Afficher la carte statique si lat/lon dispo
                 if (event.latitude != null && event.longitude != null) {
-                    val apiKey = "AIzaSyCmn8FS9tx0neuQ2nAyX6bcvTJfOmf9ahg"
                     val mapUrl = "https://maps.googleapis.com/maps/api/staticmap" +
                             "?center=${event.latitude},${event.longitude}" +
                             "&zoom=15&size=400x400" +
                             "&markers=color:red%7C${event.latitude},${event.longitude}" +
-                            "&key=$apiKey"
+                            "&key=$apiMapsKey"
 
                     AsyncImage(
                         model = mapUrl,

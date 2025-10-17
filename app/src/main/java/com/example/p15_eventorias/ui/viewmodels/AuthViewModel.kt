@@ -17,12 +17,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+open class AuthViewModel @Inject constructor(
     private val repo: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Unauthenticated)
-    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+    open val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
         repo.currentUser()?.let {
@@ -33,7 +33,7 @@ class AuthViewModel @Inject constructor(
     // Expose l'utilisateur courant
     fun currentUser(): FirebaseUser? = repo.currentUser()
 
-    fun signInWithEmail(email: String, password: String) {
+    open fun signInWithEmail(email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
             val res = repo.signInWithEmail(email, password)

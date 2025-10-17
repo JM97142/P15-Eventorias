@@ -16,6 +16,6 @@
     <string name="notifications">Notifications</string>
     <string name="search">Recherche</string>
     <string name="create_event">Créer un évènement</string>
-    <string name="arrow_back">Retour</string>
+    <string name="arrow_back">BackButton</string>
     <string name="register">S\'inscrire</string>
 </resources>

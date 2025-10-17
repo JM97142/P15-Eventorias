@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.p15_eventorias.model.Event
 import com.example.p15_eventorias.ui.viewmodels.EventViewModel
@@ -22,7 +21,7 @@ import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 @Composable
 fun EventItem(
     event: Event,
-    eventViewModel: EventViewModel = hiltViewModel(),
+    eventViewModel: EventViewModel,
     onClick: () -> Unit = {}
 ) {
     var creatorPhotoUrl by remember { mutableStateOf<String?>(null) }
@@ -84,7 +83,7 @@ fun EventItem(
                     contentDescription = "Event image",
                     modifier = Modifier
                         .width(136.dp)
-                        .weight(1f)
+                        .weight(2f)
                         .clip(MaterialTheme.shapes.medium),
                     contentScale = ContentScale.Crop
                 )

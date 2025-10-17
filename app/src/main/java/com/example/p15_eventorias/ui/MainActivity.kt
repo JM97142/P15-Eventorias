@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.p15_eventorias.BuildConfig
 import com.example.p15_eventorias.ui.nav.AppNavGraph
 import com.example.p15_eventorias.ui.theme.P15EventoriasTheme
 import com.example.p15_eventorias.utils.SignedInEventBus
@@ -21,22 +22,13 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    private val apiKey = BuildConfig.GOOGLE_API_KEY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Récupération du token FCM
-        FirebaseMessaging.getInstance().token
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.w("FCM", "Échec récupération token", task.exception)
-                    return@addOnCompleteListener
-                }
-                val token = task.result
-                Log.d("FCM", "Token: $token")
-            }
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("692744991033-0dqvlm07sqmlfl1jfgb2gpvhu629pgkh.apps.googleusercontent.com")
+            .requestIdToken(apiKey)
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)

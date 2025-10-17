@@ -178,9 +178,10 @@ fun HomeScreen(
                 contentPadding = PaddingValues(16.dp)
             ) {
                 items(filteredEvents) { event ->
-                    EventItem(event = event) {
-                        onEventClick(event)
-                    }
+                    EventItem(
+                        event = event,
+                        eventViewModel = eventViewModel,
+                        onClick = { onEventClick(event) })
                 }
             }
         }

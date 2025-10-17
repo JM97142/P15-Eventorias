@@ -47,7 +47,7 @@ class NotificationsViewModel : ViewModel() {
     /**
      * Récupère le token FCM de l’appareil.
      */
-    fun fetchFcmToken() {
+    private fun fetchFcmToken() {
         viewModelScope.launch {
             FirebaseMessaging.getInstance().token
                 .addOnCompleteListener { task ->

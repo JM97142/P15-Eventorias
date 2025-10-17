@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
@@ -23,7 +24,8 @@ fun DateTimePickerRow(
     date: String,
     onDateChange: (String) -> Unit,
     time: String,
-    onTimeChange: (String) -> Unit
+    onTimeChange: (String) -> Unit,
+    isTest: Boolean = false
 ) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
@@ -35,8 +37,8 @@ fun DateTimePickerRow(
         // Bouton Date
         OutlinedTextField(
             value = date,
-            onValueChange = {},
-            readOnly = true,
+            onValueChange = { if (isTest) onDateChange(it) },
+            readOnly = !isTest,
             label = { Text("Date") },
             placeholder = { Text("MM/DD/YYYY") },
             modifier = Modifier.weight(1f),
@@ -67,8 +69,8 @@ fun DateTimePickerRow(
         // Bouton Heure
         OutlinedTextField(
             value = time,
-            onValueChange = {},
-            readOnly = true,
+            onValueChange = { if (isTest) onTimeChange(it) },
+            readOnly = !isTest,
             label = { Text("Time") },
             placeholder = { Text("HH:MM") },
             modifier = Modifier.weight(1f),
@@ -91,7 +93,7 @@ fun DateTimePickerRow(
                         true
                     ).show()
                 }) {
-                    Icon(Icons.Default.Info, contentDescription = "Pick Time")
+                    Icon(Icons.Default.AccessTime, contentDescription = "Pick Time")
                 }
             }
         )
