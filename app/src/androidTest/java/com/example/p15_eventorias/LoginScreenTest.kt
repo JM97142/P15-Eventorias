@@ -46,9 +46,7 @@ class LoginScreenTest {
         }
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 1 : présence de base de l’écran
-    // -------------------------------------------------------
+    // Présence de base de l’écran
     @Test
     fun loginScreen_displaysBasicElements() {
         setContent()
@@ -63,9 +61,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 2 : clic sur bouton Google
-    // -------------------------------------------------------
+    // Clic sur bouton Google
     @Test
     fun clickingGoogleButton_triggersCallback() {
         setContent()
@@ -77,9 +73,7 @@ class LoginScreenTest {
         assert(googleClicked)
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 3 : affichage du formulaire e-mail
-    // -------------------------------------------------------
+    // Affichage du formulaire e-mail
     @Test
     fun clickingEmailButton_showsEmailForm() {
         setContent()
@@ -97,9 +91,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 4 : champ e-mail et mot de passe éditables
-    // -------------------------------------------------------
+    // Champ e-mail et mot de passe éditables
     @Test
     fun emailPasswordFields_acceptInput() {
         setContent()
@@ -121,9 +113,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 5 : bouton annuler revient à l’état initial
-    // -------------------------------------------------------
+    // Bouton annuler revient à l’état initial
     @Test
     fun cancelButton_returnsToMainView() {
         setContent()
@@ -141,9 +131,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 6 : affichage de l’état Loading
-    // -------------------------------------------------------
+    // Affichage de l’état Loading
     @Test
     fun showsProgressIndicator_whenLoading() {
         uiState.value = AuthUiState.Loading
@@ -154,9 +142,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 7 : affichage d’un message d’erreur
-    // -------------------------------------------------------
+    // Affichage d’un message d’erreur
     @Test
     fun showsErrorMessage_whenErrorState() {
         uiState.value = AuthUiState.Error("Identifiants incorrects")
@@ -167,9 +153,7 @@ class LoginScreenTest {
             .assertExists()
     }
 
-    // -------------------------------------------------------
-    // 🧪 TEST 8 : lien vers la création de compte
-    // -------------------------------------------------------
+    // Lien vers la création de compte
     @Test
     fun clickingCreateAccount_triggersCallback() {
         setContent()

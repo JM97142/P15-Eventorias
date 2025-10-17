@@ -41,7 +41,7 @@ open class EventViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private suspend fun addEvent(event: Event) {
+    private fun addEvent(event: Event) {
         viewModelScope.launch {
             val newEventRef = db.collection("events").document()
             val newEvent = event.copy(id = newEventRef.id)

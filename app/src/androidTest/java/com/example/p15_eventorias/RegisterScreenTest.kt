@@ -30,7 +30,7 @@ class RegisterScreenTest {
         registerSuccess = false
     }
 
-    // ✅ Vérifie que tous les champs et boutons sont visibles
+    // Vérifie que tous les champs et boutons sont visibles
     @Test
     fun registerScreen_displaysAllFields_andButtons() {
         composeTestRule.setContent {
@@ -68,7 +68,7 @@ class RegisterScreenTest {
         assert(backClicked)
     }
 
-    // ✅ Vérifie que le bouton register ne fait rien si les champs sont vides
+    // Vérifie que le bouton register ne fait rien si les champs sont vides
     @Test
     fun registerScreen_registerButton_withEmptyFields_doesNotCallRegisterUser() {
         composeTestRule.setContent {
