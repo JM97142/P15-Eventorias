@@ -1,3 +1,4 @@
+import com.android.build.gradle.BaseExtension
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.hilt)
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
+    id("jacoco")
 }
 
 val localProperties = Properties().apply {
@@ -38,6 +40,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -73,6 +79,27 @@ android {
             )
         }
     }
+}
+
+val androidExtension = extensions.getByType<BaseExtension>()
+val jacocoTestReport by tasks.registering(JacocoReport::class) {
+    dependsOn("testDebugUnitTest", "createDebugCoverageReport")
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports"
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug")
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom(files(mainSrc))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("**/*.exec", "**/*.ec")
+    })
 }
 
 dependencies {
