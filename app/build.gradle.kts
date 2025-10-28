@@ -92,10 +92,10 @@ sonar {
         property("sonar.sources", "src/main/java, src/main/kotlin")
         property("sonar.tests", "src/test/java, src/androidTest/java")
 
-        property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
-        property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
+        property("sonar.java.binaries", "${project.buildFile}/intermediates/javac/debug/classes")
+        property("sonar.kotlin.binaries", "${project.buildFile}/tmp/kotlin-classes/debug")
 
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildFile}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
     }
 }
 
