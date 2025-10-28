@@ -34,7 +34,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run tests + Jacoco
-        run: ./gradlew clean jacocoTestReport --stacktrace
+        run: ./gradlew jacocoTestReport
 
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
