@@ -107,6 +107,7 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
 
     reports {
         xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoTestReport/jacocoTestReport.xml"))
         html.required.set(true)
     }
 
