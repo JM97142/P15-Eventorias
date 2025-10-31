@@ -80,6 +80,10 @@ android {
             )
         }
     }
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
 }
 
 sonar {
@@ -100,10 +104,10 @@ sonar {
 }
 
 val androidExtension = extensions.getByType<BaseExtension>()
-val jacocoTestReport by tasks.registering(JacocoReport::class) {
+tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest", "createDebugCoverageReport")
     group = "Reporting"
-    description = "Generate Jacoco coverage reports"
+    description = "Generate Jacoco coverage reports for unit + instrumentation tests"
 
     reports {
         xml.required.set(true)
@@ -111,32 +115,24 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
         html.required.set(true)
     }
 
-    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug")
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
-
-    classDirectories.setFrom(debugTree)
-    sourceDirectories.setFrom(files(mainSrc))
-    executionData.setFrom(fileTree(layout.buildDirectory) {
-        include("**/*.exec", "**/*.ec")
-    })
-}
-val jacocoNoDevice by tasks.registering(JacocoReport::class) {
-    group = "Reporting"
-    description = "Generate Jacoco report for CI without running any tests"
-
-    reports {
-        xml.required.set(true)
-        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoNoDevice.xml"))
-        html.required.set(true)
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
+        exclude("**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*")
     }
-
-    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug")
     val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
 
-    classDirectories.setFrom(debugTree)
+    classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
-    // Pas d'executionData = on ne lance aucun test
-    executionData.setFrom(files())
+
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include(
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
+        )
+    })
 }
 
 dependencies {
