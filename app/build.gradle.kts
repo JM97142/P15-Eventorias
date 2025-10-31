@@ -120,6 +120,24 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
         include("**/*.exec", "**/*.ec")
     })
 }
+val jacocoNoDevice by tasks.registering(JacocoReport::class) {
+    group = "Reporting"
+    description = "Generate Jacoco report for CI without running any tests"
+
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoNoDevice.xml"))
+        html.required.set(true)
+    }
+
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug")
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom(files(mainSrc))
+    // Pas d'executionData = on ne lance aucun test
+    executionData.setFrom(files())
+}
 
 dependencies {
     // Kotlin

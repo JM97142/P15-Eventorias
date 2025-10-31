@@ -33,8 +33,8 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run tests + Jacoco
-        run: ./gradlew clean jacocoTestReport --stacktrace
+      - name: Run Jacoco for CI (no device needed)
+        run: ./gradlew clean jacocoNoDevice sonar --stacktrace
 
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
