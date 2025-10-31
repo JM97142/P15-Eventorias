@@ -92,10 +92,10 @@ sonar {
         property("sonar.sources", "src/main/java, src/main/kotlin")
         property("sonar.tests", "src/test/java, src/androidTest/java")
 
-        property("sonar.java.binaries", "${project.buildFile}/intermediates/javac/debug/classes")
-        property("sonar.kotlin.binaries", "${project.buildFile}/tmp/kotlin-classes/debug")
+        property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
+        property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
 
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildFile}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
     }
 }
 
@@ -119,6 +119,24 @@ val jacocoTestReport by tasks.registering(JacocoReport::class) {
     executionData.setFrom(fileTree(layout.buildDirectory) {
         include("**/*.exec", "**/*.ec")
     })
+}
+val jacocoNoDevice by tasks.registering(JacocoReport::class) {
+    group = "Reporting"
+    description = "Generate Jacoco report for CI without running any tests"
+
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoNoDevice.xml"))
+        html.required.set(true)
+    }
+
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug")
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(debugTree)
+    sourceDirectories.setFrom(files(mainSrc))
+    // Pas d'executionData = on ne lance aucun test
+    executionData.setFrom(files())
 }
 
 dependencies {
