@@ -42,8 +42,8 @@ jobs:
         run: ./gradlew clean assembleRelease -x test -x connectedAndroidTest \
           -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
           -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
-          -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-          -Pandroid.injected.signing.key.password=$KEY_PASSWORD
+          -Pandroid.injected.signing.key.alias=$ANDROID_KEY_ALIAS \
+          -Pandroid.injected.signing.key.password=$ANDROID_KEY_PASSWORD
 
       - name: Install Firebase CLI
         run: curl -sL https://firebase.tools | bash
