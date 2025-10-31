@@ -65,7 +65,7 @@ jobs:
           status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<TON_PROJECT_KEY>" | jq -r '.projectStatus.status')
           echo "Quality Gate status: $status"
           if [ "$status" != "OK" ]; then
-            echo "❌ Quality Gate failed"
+            echo "Quality Gate failed"
             exit 1
           fi
 
@@ -100,10 +100,13 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          target: default
+          target: google_apis
           arch: x86_64
           profile: pixel_6
-          script: ./gradlew connectedDebugAndroidTest
+          script: ./gradlew connectedDebugAndroidTest --stacktrace
+
+      - name: List connected devices (debug)
+        run: adb devices
 
       - name: Upload instrumentation test report
         uses: actions/upload-artifact@v4
