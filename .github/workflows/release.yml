@@ -38,6 +38,9 @@ jobs:
           echo "KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       - name: Build Signed Release APK
         run: ./gradlew clean assembleRelease -x test -x connectedAndroidTest \
           -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
