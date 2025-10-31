@@ -28,11 +28,8 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: Decode and unzip keystore
-        run: |
-          echo "$ANDROID_KEYSTORE_ZIP" | base64 --decode > key.zip
-          unzip -o key.zip
-          echo "Keystore extracted"
+      - name: Decode keystore
+        run: echo "$ANDROID_KEYSTORE_ZIP" | base64 --decode > key.zip && unzip key.zip
 
       - name: Setup Environment Variables
         run: |
