@@ -90,7 +90,7 @@ sonar {
     properties {
         property("sonar.projectKey", "JM97142_P15-Eventorias")
         property("sonar.organization", "JM97142")
-        property("sonar.host.url", "https://sonarcloud.io/projects")
+        property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
 
         property("sonar.sources", "src/main/java, src/main/kotlin")
