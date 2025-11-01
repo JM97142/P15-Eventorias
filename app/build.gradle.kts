@@ -88,10 +88,10 @@ android {
 
 sonar {
     properties {
-        property("sonar.projectKey", "JM97142:P15-Eventorias")
-        property("sonar.organization", "JM97142")
+        property("sonar.projectKey", "jm97142_P15-Eventorias")
+        property("sonar.organization", "jm97142")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.token", System.getenv("SONAR_TOKEN"))
+        property("sonar.login", System.getenv("SONAR_TOKEN"))
 
         property("sonar.sources", "src/main/java, src/main/kotlin")
         property("sonar.tests", "src/test/java, src/androidTest/java")
