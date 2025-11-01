@@ -56,7 +56,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Checking SonarCloud Quality Gate status..."
-          status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=jm97142:P15-Eventorias" | jq -r '.projectStatus.status')
+          status=$(curl -s -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=JM97142_P15-Eventorias" | jq -r '.projectStatus.status')
           echo "Quality Gate status: $status"
           if [ "$status" != "OK" ]; then
             echo "Quality Gate failed"
