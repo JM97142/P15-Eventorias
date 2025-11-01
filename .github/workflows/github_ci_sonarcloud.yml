@@ -36,7 +36,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run unit tests with Jacoco
-        run: ./gradlew clean testDebugUnitTest jacocoTestReport --stacktrace
+        run: ./gradlew clean testDebugUnitTest jacocoUnitTestReport --stacktrace
 
       - name: Upload unit test report
         uses: actions/upload-artifact@v4
@@ -44,17 +44,11 @@ jobs:
           name: unit-test-report
           path: app/build/reports/tests/testDebugUnitTest/
 
-      - name: Upload code coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: code-coverage-report
-          path: app/build/reports/jacoco/jacocoTestReport/html/
-
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar --stacktrace
+        run: ./gradlew sonar
 
       - name: Verify SonarCloud Quality Gate
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -62,7 +56,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           echo "Checking SonarCloud Quality Gate status..."
-          status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<TON_PROJECT_KEY>" | jq -r '.projectStatus.status')
+          status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "https://sonarcloud.io/api/qualitygates/project_status?projectKey=jm97142:P15-Eventorias" | jq -r '.projectStatus.status')
           echo "Quality Gate status: $status"
           if [ "$status" != "OK" ]; then
             echo "Quality Gate failed"
@@ -96,19 +90,19 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run Android Instrumentation Tests
+      - name: Start emulator & run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
           profile: pixel_6
-          force-avd-creation: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save
-          script: ./gradlew connectedDebugAndroidTest --stacktrace
-
-      - name: List connected devices (debug)
-        run: adb devices
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio
+          script: |
+            adb devices
+            ./gradlew connectedDebugAndroidTest --stacktrace
+            ./gradlew jacocoAndroidTestReport --stacktrace
 
       - name: Upload instrumentation test report
         uses: actions/upload-artifact@v4
