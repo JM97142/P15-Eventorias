@@ -10,7 +10,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("jacoco")
-    id("org.sonarqube") version "7.0.1.6134"
+    id("org.sonarqube") version "5.1.0.4882"
 }
 
 val localProperties = Properties().apply {
