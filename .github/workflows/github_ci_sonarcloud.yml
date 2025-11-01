@@ -32,17 +32,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Run unit tests with Jacoco
-        run: ./gradlew clean test jacocoTestReport --stacktrace
+        run: ./gradlew clean testDebugUnitTest jacocoTestReport --stacktrace
 
       - name: Upload unit test report
         uses: actions/upload-artifact@v4
@@ -50,11 +44,17 @@ jobs:
           name: unit-test-report
           path: app/build/reports/tests/testDebugUnitTest/
 
+      - name: Upload code coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: app/build/reports/jacoco/jacocoTestReport/html/
+
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
+        run: ./gradlew sonar --stacktrace
 
       - name: Verify SonarCloud Quality Gate
         if: ${{ github.actor != 'dependabot[bot]' }}
@@ -103,6 +103,8 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          force-avd-creation: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save
           script: ./gradlew connectedDebugAndroidTest --stacktrace
 
       - name: List connected devices (debug)
