@@ -89,7 +89,7 @@ android {
 sonar {
     properties {
         property("sonar.projectKey", "JM97142_P15-Eventorias")
-        property("sonar.organization", "JM97142")
+        property("sonar.organization", "Jean-Michel T.")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.login", System.getenv("SONAR_TOKEN"))
 
