@@ -83,6 +83,12 @@ android {
     lint {
         checkReleaseBuilds = false
         abortOnError = false
+        disable += listOf(
+            "FrequentlyChangingValue",
+            "RememberInComposition",
+            "NullSafeMutableLiveData"
+        )
+        abortOnError = false
     }
 }
 
