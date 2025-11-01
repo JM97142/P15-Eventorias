@@ -10,7 +10,7 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("jacoco")
-    id("org.sonarqube") version "5.1.0.4882"
+    id("org.sonarqube") version "7.0.1.6134"
 }
 
 val localProperties = Properties().apply {
@@ -86,7 +86,8 @@ android {
         disable += listOf(
             "FrequentlyChangingValue",
             "RememberInComposition",
-            "NullSafeMutableLiveData"
+            "NullSafeMutableLiveData",
+            "AutoboxingStateCreation"
         )
         abortOnError = false
     }
@@ -97,7 +98,6 @@ sonar {
         property("sonar.projectKey", "JM97142_P15-Eventorias")
         property("sonar.organization", "jm97142")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.login", System.getenv("SONAR_TOKEN"))
 
         property("sonar.sources", "src/main/java, src/main/kotlin")
         property("sonar.tests", "src/test/java, src/androidTest/java")
