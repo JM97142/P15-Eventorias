@@ -54,7 +54,20 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio
           script: |
-            adb devices
+            timeout=300
+            booted=""
+            until [[ "$booted" == "1" || $timeout -le 0 ]]; do
+            booted=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            echo "Boot status: $booted"
+            sleep 5
+            timeout=$((timeout-5))
+            done
+          
+            if [[ "$booted" != "1" ]]; then
+            echo "Emulator failed to boot in time"
+            exit 1
+            fi
+            
             ./gradlew connectedDebugAndroidTest jacocoAndroidTestReport --stacktrace
 
       - name: SonarCloud Scan
