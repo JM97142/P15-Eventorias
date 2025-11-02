@@ -44,17 +44,35 @@ jobs:
           name: unit-test-report
           path: app/build/reports/tests/testDebugUnitTest/
 
-      - name: SonarCloud Scan
+      - name: Debug Sonar env & API
         if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew sonar \
-            -Dsonar.projectKey=JM97142_P15-Eventorias \
-            -Dsonar.organization=jm97142 \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          echo "=== env SONAR_TOKEN defined? ==="
+          if [ -z "$SONAR_TOKEN" ]; then echo "SONAR_TOKEN is NOT set"; exit 1; else echo "SONAR_TOKEN is set"; fi
 
+          echo "=== print few envs related to Git ==="
+          git rev-parse --abbrev-ref HEAD || true
+          git remote -v || true
+
+          echo "=== list gradle tasks briefly (root) ==="
+          ./gradlew tasks --all --no-daemon --console=plain | sed -n '1,200p' || true
+
+          echo "=== Dump sonar.* properties from Gradle (root) ==="
+          ./gradlew -q printSonarProps || true
+
+          echo "=== SonarCloud API: check project search by projectKey ==="
+          curl -s -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/components/search?component=JM97142_P15-Eventorias" | jq -C .
+
+          echo "=== SonarCloud API: list projects in organization jm97142 ==="
+          curl -s -u "$SONAR_TOKEN:" "https://sonarcloud.io/api/projects/search?organization=jm97142" | jq -C '.'
+
+      - name: SonarCloud Scan
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
 
       - name: Verify SonarCloud Quality Gate
         if: ${{ github.actor != 'dependabot[bot]' }}

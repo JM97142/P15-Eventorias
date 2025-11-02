@@ -162,6 +162,15 @@ tasks.register<JacocoReport>("jacocoAndroidTestReport") {
         include("outputs/code_coverage/debugAndroidTest/connected/**/*.ec")
     })
 }
+tasks.register("printSonarProps") {
+    doLast {
+        println("=== Gradle properties sonar.* ===")
+        listOf("sonar.projectKey","sonar.organization","sonar.host.url").forEach {
+            println("$it = " + (project.findProperty(it)?: "UNDEFINED"))
+        }
+        println("SONAR_TOKEN env = " + (System.getenv("SONAR_TOKEN")?.let{"SET"} ?: "UNSET"))
+    }
+}
 
 dependencies {
     // Kotlin
