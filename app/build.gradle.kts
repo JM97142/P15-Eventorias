@@ -92,6 +92,21 @@ android {
     }
 }
 
+sonar {
+    properties {
+        property("sonar.projectKey", "JM97142_P15-Eventorias")
+        property("sonar.organization", "jm97142")
+        property("sonar.host.url", "https://sonarcloud.io")
+
+        property("sonar.sources", "src/main/java, src/main/kotlin")
+        property("sonar.tests", "src/test/java, src/androidTest/java")
+        property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
+        property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
+
+    }
+}
+
 val androidExtension = extensions.getByType<BaseExtension>()
 
 // Rapport pour les tests unitaires
@@ -112,7 +127,7 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val mainSrc = androidExtension.sourceSets.getByName("test").java.srcDirs
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
@@ -120,7 +135,6 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
     })
 }
-
 // Rapport pour les tests instrumentés
 tasks.register<JacocoReport>("jacocoAndroidTestReport") {
     dependsOn("connectedDebugAndroidTest")
