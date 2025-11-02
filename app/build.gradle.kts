@@ -10,7 +10,6 @@ plugins {
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
     id("jacoco")
-    id("org.sonarqube") version "5.1.0.4882"
 }
 
 val localProperties = Properties().apply {
@@ -90,20 +89,6 @@ android {
             "AutoboxingStateCreation"
         )
         abortOnError = false
-    }
-}
-
-sonar {
-    properties {
-        property("sonar.projectKey", "JM97142_P15-Eventorias")
-        property("sonar.organization", "jm97142")
-        property("sonar.host.url", "https://sonarcloud.io")
-
-        property("sonar.sources", "src/main/java, src/main/kotlin")
-        property("sonar.tests", "src/test/java, src/androidTest/java")
-        property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
-        property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
     }
 }
 
