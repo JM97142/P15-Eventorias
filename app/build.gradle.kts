@@ -106,27 +106,18 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
         html.required.set(true)
     }
 
-    val javaDebugTree = fileTree("${layout.buildDirectory}/intermediates/javac/debug/classes") {
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
         exclude(
             "**/R.class", "**/R$*.class", "**/BuildConfig.*",
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val kotlinDebugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
-        exclude(
-            "**/R.class", "**/R$*.class", "**/BuildConfig.*",
-            "**/Manifest*.*", "**/*Test*.*"
-        )
-    }
-    classDirectories.setFrom(files(javaDebugTree, kotlinDebugTree))
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
 
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs +
-            androidExtension.sourceSets.getByName("main").kotlin.srcDirs()
+    classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
-
     executionData.setFrom(fileTree(layout.buildDirectory) {
-        include("jacoco/testDebugUnitTest.exec")
-        include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
+        include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
     })
 }
 
@@ -148,7 +139,7 @@ tasks.register<JacocoReport>("jacocoAndroidTestReport") {
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+    val mainSrc = androidExtension.sourceSets.getByName("test").java.srcDirs
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
