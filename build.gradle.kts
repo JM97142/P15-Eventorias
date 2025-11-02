@@ -18,7 +18,7 @@ sonar {
         property("sonar.tests", "src/test/java, src/androidTest/java")
         property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
         property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoTestReport/jacocoUnitTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "$buildDir/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
 
     }
 }
