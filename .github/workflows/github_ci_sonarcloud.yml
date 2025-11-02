@@ -39,37 +39,31 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run unit tests with Jacoco
-        run: ./gradlew clean testDebugUnitTest jacocoUnitTestReport --stacktrace
-
-      - name: Start emulator & run instrumentation tests
+      - name: Start Android emulator and run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 29
           target: google_apis
           arch: x86_64
           profile: pixel_6
-          disable-animations: true
-          emulator-options: -no-snapshot-load -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio
           script: |
-            adb wait-for-device
-            
             adb devices
-            
-            STATUS=$(adb get-state)
-            if [ "$STATUS" != "device" ]; then
-              adb kill-server
-              adb start-server
-              adb wait-for-device
-              STATUS=$(adb get-state)
-              if [ "$STATUS" != "device" ]; then
-                exit 1
-              fi
-            fi
-            
-            adb shell input keyevent 82
-            
-            ./gradlew connectedDebugAndroidTest jacocoAndroidTestReport --stacktrace
+            ./gradlew connectedDebugAndroidTest --stacktrace
+
+      - name: Generate Jacoco Coverage Report
+        run: ./gradlew jacocoAndroidTestReport --stacktrace
+
+      - name: Upload instrumentation test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-report
+          path: app/build/reports/androidTests/connected/
+
+      - name: Upload JaCoCo test coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-coverage-report
+          path: app/build/reports/jacoco/jacocoAndroidTestReport/
 
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
