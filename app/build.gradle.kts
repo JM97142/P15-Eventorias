@@ -94,19 +94,16 @@ android {
 
 val androidExtension = extensions.getByType<BaseExtension>()
 
-// Rapport pour les tests
-tasks.register<JacocoReport>("jacocoFullReport") {
-    // Dépend des deux types de tests
-    dependsOn("testDebugUnitTest", "connectedDebugAndroidTest")
-
+// Rapport pour les tests unitaires
+tasks.register<JacocoReport>("jacocoUnitTestReport") {
+    dependsOn("testDebugUnitTest")
     group = "Reporting"
-    description = "Generate Jacoco coverage reports for both unit and instrumentation tests"
+    description = "Generate Jacoco coverage reports for unit tests"
 
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoFullReport/jacocoFullReport.xml"))
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml"))
         html.required.set(true)
-        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/jacocoFullReport/html"))
     }
 
     val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
@@ -115,20 +112,40 @@ tasks.register<JacocoReport>("jacocoFullReport") {
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val mainSrc = android.sourceSets.getByName("main").java.srcDirs
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+    })
+}
 
-    // Combine les deux sources de données
-    executionData.setFrom(
-        fileTree(layout.buildDirectory) {
-            include(
-                "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
-            )
-        }
-    )
+// Rapport pour les tests instrumentés
+tasks.register<JacocoReport>("jacocoAndroidTestReport") {
+    dependsOn("connectedDebugAndroidTest")
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for instrumentation tests"
+
+    reports {
+        xml.required.set(true)
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoAndroidTestReport/jacocoAndroidTestReport.xml"))
+        html.required.set(true)
+    }
+
+    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
+        exclude(
+            "**/R.class", "**/R$*.class", "**/BuildConfig.*",
+            "**/Manifest*.*", "**/*Test*.*"
+        )
+    }
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    classDirectories.setFrom(files(debugTree))
+    sourceDirectories.setFrom(files(mainSrc))
+    executionData.setFrom(fileTree(layout.buildDirectory) {
+        include("outputs/code_coverage/debugAndroidTest/connected/**/*.ec")
+    })
 }
 
 dependencies {
