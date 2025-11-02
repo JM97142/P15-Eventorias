@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  ADB_INSTALL_TIMEOUT: 20
+  EMULATOR_TIMEOUT: 600
+
 jobs:
   build:
     name: Build & Unit Tests
@@ -49,8 +53,22 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio
           script: |
             adb wait-for-device
+            
             adb devices
+            
+            STATUS=$(adb get-state)
+            if [ "$STATUS" != "device" ]; then
+              adb kill-server
+              adb start-server
+              adb wait-for-device
+              STATUS=$(adb get-state)
+              if [ "$STATUS" != "device" ]; then
+                exit 1
+              fi
+            fi
+            
             adb shell input keyevent 82
+            
             ./gradlew connectedDebugAndroidTest jacocoAndroidTestReport --stacktrace
 
       - name: SonarCloud Scan
