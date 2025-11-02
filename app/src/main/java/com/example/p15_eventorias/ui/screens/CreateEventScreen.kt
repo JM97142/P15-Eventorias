@@ -234,7 +234,7 @@ fun CreateEventScreen(
                         var longitude: Double? = null
 
                         try {
-                            val results = geocoder.getFromLocationName(address, 1)
+                            val results = geocoder.getFromLocationName(address, 1)?.toList()
                             if (!results.isNullOrEmpty()) {
                                 latitude = results[0].latitude
                                 longitude = results[0].longitude

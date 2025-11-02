@@ -9,6 +9,7 @@ import com.example.p15_eventorias.model.Event
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,10 @@ import java.net.URLEncoder
 import java.util.UUID
 import javax.net.ssl.HttpsURLConnection
 
-open class EventViewModel(application: Application) : AndroidViewModel(application) {
+open class EventViewModel(
+    application: Application,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : AndroidViewModel(application) {
 
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
@@ -54,7 +58,7 @@ open class EventViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     private suspend fun geocodeAddress(address: String): Pair<Double, Double>? {
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             try {
                 val urlAddress = URLEncoder.encode(address, "UTF-8")
                 val url = URL("https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=$urlAddress")
