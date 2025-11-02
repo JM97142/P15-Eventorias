@@ -134,8 +134,8 @@ fun RegisterScreen(
                 onValueChange = { password = it },
                 label = { Text(stringResource(id = R.string.password)) },
                 keyboardOptions = KeyboardOptions(
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Text,
+                    autoCorrectEnabled = false,
+                    keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
                 ),
                 modifier = Modifier.fillMaxWidth(),
