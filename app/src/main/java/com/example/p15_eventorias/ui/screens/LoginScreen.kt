@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
@@ -15,6 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.p15_eventorias.R
@@ -82,6 +85,11 @@ fun LoginScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text(stringResource(id = R.string.password)) },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .semantics {
