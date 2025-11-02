@@ -112,7 +112,7 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+    val mainSrc = androidExtension.sourceSets.getByName("test").java.srcDirs
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
@@ -139,7 +139,7 @@ tasks.register<JacocoReport>("jacocoAndroidTestReport") {
             "**/Manifest*.*", "**/*Test*.*"
         )
     }
-    val mainSrc = androidExtension.sourceSets.getByName("test").java.srcDirs
+    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
