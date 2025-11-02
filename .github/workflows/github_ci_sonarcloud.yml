@@ -53,7 +53,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           force-avd-creation: true
-          emulator-options: -gpu swiftshader_indirect -noaudio
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio
           script: |
             # Attendre que l'émulateur démarre complètement
             timeout=300
