@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: Build & Unit Tests
+    name: Build, Test & SonarCloud
     runs-on: ubuntu-latest
 
     steps:
@@ -44,35 +44,38 @@ jobs:
         with:
           api-level: 29
           target: google_apis
-          arch: x86_64
+          arch: x86
           profile: pixel_6
           script: |
             adb devices
             ./gradlew connectedDebugAndroidTest --stacktrace
 
-      - name: Generate Jacoco Coverage Report
-        run: ./gradlew jacocoAndroidTestReport --stacktrace
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
 
-      - name: Upload instrumentation test report
+      - name: Generate Full Jacoco Coverage Report (unit + android tests)
+        run: ./gradlew jacocoFullReport --stacktrace
+
+      - name: Upload Android test report
         uses: actions/upload-artifact@v4
         with:
           name: android-test-report
           path: app/build/reports/androidTests/connected/
 
-      - name: Upload JaCoCo test coverage
+      - name: Upload Full Coverage Report
         uses: actions/upload-artifact@v4
         with:
-          name: android-coverage-report
-          path: app/build/reports/jacoco/jacocoAndroidTestReport/
+          name: full-coverage-report
+          path: app/build/reports/jacoco/jacocoFullReport/
 
       - name: SonarCloud Scan
         if: ${{ github.actor != 'dependabot[bot]' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-            ./gradlew sonarqube \
-              -Dsonar.token="$SONAR_TOKEN" \
-              --stacktrace --info
+          ./gradlew sonarqube \
+            -Dsonar.token="$SONAR_TOKEN" \
+            --stacktrace --info
 
       - name: Verify SonarCloud Quality Gate
         if: ${{ github.actor != 'dependabot[bot]' }}
