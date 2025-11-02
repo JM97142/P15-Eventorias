@@ -52,7 +52,8 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio
+          force-avd-creation: true
+          emulator-options: -gpu swiftshader_indirect -noaudio
           script: |
             # Attendre que l'émulateur démarre complètement
             timeout=300
@@ -60,7 +61,7 @@ jobs:
             until [[ "$booted" == "1" || $timeout -le 0 ]]; do
               booted=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
               echo "Boot status: $booted"
-              sleep 5
+              sleep 60
               timeout=$((timeout-5))
             done
       
