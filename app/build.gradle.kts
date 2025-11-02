@@ -117,23 +117,32 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
 
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml"))
+        xml.outputLocation.set(
+            layout.buildDirectory.file("reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
+        )
         html.required.set(true)
     }
 
     val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
         exclude(
-            "**/R.class", "**/R$*.class", "**/BuildConfig.*",
-            "**/Manifest*.*", "**/*Test*.*"
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*"
         )
     }
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
+
+    val mainSrc = files("src/main/java")
 
     classDirectories.setFrom(files(debugTree))
     sourceDirectories.setFrom(files(mainSrc))
-    executionData.setFrom(fileTree(layout.buildDirectory) {
-        include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
-    })
+
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) {
+            include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+        }
+    )
 }
 // Rapport pour les tests instrumentés
 tasks.register<JacocoReport>("jacocoAndroidTestReport") {
