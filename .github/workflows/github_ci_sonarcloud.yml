@@ -38,12 +38,6 @@ jobs:
       - name: Run unit tests with Jacoco
         run: ./gradlew clean testDebugUnitTest jacocoUnitTestReport --stacktrace
 
-      - name: Upload unit test report
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-report
-          path: app/build/reports/tests/testDebugUnitTest/
-
       - name: Start emulator & run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -52,24 +46,11 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          force-avd-creation: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio
           script: |
-            # Attendre que l'émulateur démarre complètement
-            timeout=300
-            booted=""
-            until [[ "$booted" == "1" || $timeout -le 0 ]]; do
-              booted=$(adb -e shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              echo "Boot status: $booted"
-              sleep 60
-              timeout=$((timeout-5))
-            done
-      
-            if [[ "$booted" != "1" ]]; then
-              echo "Emulator failed to boot in time"
-              exit 1
-            fi
-            
+            adb wait-for-device
+            adb devices
+            adb shell input keyevent 82
             ./gradlew connectedDebugAndroidTest jacocoAndroidTestReport --stacktrace
 
       - name: SonarCloud Scan
