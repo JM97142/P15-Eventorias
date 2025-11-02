@@ -14,7 +14,7 @@ sonar {
         property("sonar.organization", "jm97142")
         property("sonar.host.url", "https://sonarcloud.io")
 
-        property("sonar.sources", "src/main/java, src/main/kotlin")
+        property("sonar.sources", "src/main/java")
         property("sonar.tests", "src/test/java, src/androidTest/java")
         property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
         property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
