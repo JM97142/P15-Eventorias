@@ -39,14 +39,17 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Start Android emulator and run tests
+      - name: Start emulator and wait for boot
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          target: google_apis
-          arch: x86
-          profile: pixel_6
+          api-level: 30
+          target: default
+          arch: x86_64
+          profile: Nexus 6
           script: |
+            adb wait-for-device
+            adb shell getprop sys.boot_completed
+            sleep 30
             adb devices
             ./gradlew connectedDebugAndroidTest --stacktrace
 
