@@ -125,28 +125,26 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
 }
 // Rapport pour les tests instrumentés
 tasks.register<JacocoReport>("jacocoAndroidTestReport") {
-    dependsOn("connectedDebugAndroidTest")
+    dependsOn("connectedDebugAndroidTest") // lance les tests instrumentés sur un émulateur
     group = "Reporting"
     description = "Generate Jacoco coverage reports for instrumentation tests"
-
     reports {
         xml.required.set(true)
         xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoAndroidTestReport/jacocoAndroidTestReport.xml"))
         html.required.set(true)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/jacocoAndroidTestReport/html"))
     }
-
-    val debugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
-        exclude(
-            "**/R.class", "**/R$*.class", "**/BuildConfig.*",
-            "**/Manifest*.*", "**/*Test*.*"
-        )
+    val mainSrc = files("src/main/java", "src/main/kotlin")
+    val javaClasses = fileTree("build/intermediates/javac/debug/classes") {
+        exclude("**/R.class","**/R$*.class","**/BuildConfig.*","**/Manifest*.*","**/*Test*.*")
     }
-    val mainSrc = androidExtension.sourceSets.getByName("main").java.srcDirs
-
-    classDirectories.setFrom(files(debugTree))
-    sourceDirectories.setFrom(files(mainSrc))
-    executionData.setFrom(fileTree(layout.buildDirectory) {
-        include("outputs/code_coverage/debugAndroidTest/connected/**/*.ec")
+    val kotlinClasses = fileTree("build/tmp/kotlin-classes/debug") {
+        exclude("**/R.class","**/R$*.class","**/BuildConfig.*","**/Manifest*.*","**/*Test*.*")
+    }
+    classDirectories.setFrom(files(javaClasses,kotlinClasses))
+    sourceDirectories.setFrom(mainSrc)
+    executionData.setFrom(fileTree("build/outputs/code_coverage/debugAndroidTest/connected") {
+        include("**/*.ec") // fichiers générés par les tests instrumentés
     })
 }
 
@@ -155,14 +153,18 @@ sonar {
         property("sonar.projectKey", "JM97142_P15-Eventorias")
         property("sonar.organization", "jm97142")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src/main/java")
-        property("sonar.tests", "src/test/java")
+        property("sonar.sources", "src/main/java,src/main/kotlin")
+        property("sonar.tests", "src/test/java,src/androidTest/java")
         property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
         property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
-        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            "${project.buildDir}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml," +
+                    "${project.buildDir}/reports/jacoco/jacocoAndroidTestReport/jacocoAndroidTestReport.xml"
+        )
         property("sonar.coverage.exclusions", "**/R.class,**/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*")
     }
 }
+
 dependencies {
     // Kotlin
     implementation(platform(libs.kotlin.bom))
