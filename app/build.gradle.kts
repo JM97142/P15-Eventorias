@@ -101,37 +101,27 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
 
     reports {
         xml.required.set(true)
-        xml.outputLocation.set(
-            layout.buildDirectory.file("reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
-        )
+        xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml"))
         html.required.set(true)
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/jacocoUnitTestReport/html"))
     }
 
     val mainSrc = files("src/main/java", "src/main/kotlin")
 
-    val javaClasses = fileTree("${layout.buildDirectory}/intermediates/javac/debug/classes") {
+    val javaClasses = fileTree("build/intermediates/javac/debug/classes") {
         exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*")
     }
-    val kotlinClasses = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
+    val kotlinClasses = fileTree("build/tmp/kotlin-classes/debug") {
         exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*")
     }
 
     classDirectories.setFrom(files(javaClasses, kotlinClasses))
     sourceDirectories.setFrom(mainSrc)
 
-    executionData.setFrom(
-        fileTree(layout.buildDirectory) {
-            include(
-                "jacoco/testDebugUnitTest.exec",
-                "jacoco/testDebug.exec",
-                "outputs/unit_test_code_coverage/debugUnitTest/*.exec",
-                "**/testDebugUnitTest.exec",
-                "**/debugUnitTest.exec",
-                "**/*.exec"
-            )
-        }
-    )
+    // Seuls les tests unitaires produisent le .exec
+    executionData.setFrom(fileTree("build/outputs/unit_test_code_coverage/debugUnitTest") {
+        include("*.exec")
+    })
 }
 // Rapport pour les tests instrumentés
 tasks.register<JacocoReport>("jacocoAndroidTestReport") {
