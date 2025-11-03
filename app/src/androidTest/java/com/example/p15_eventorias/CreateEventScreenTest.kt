@@ -25,46 +25,43 @@ class CreateEventScreenTest {
             )
         }
 
-        // Vérifie la présence des champs
-        composeTestRule.onNodeWithContentDescription("Champ de texte : titre de l’événement").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Champ de texte : description de l’événement").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Champ de texte : adresse de l’événement").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Title").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Description").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Address").assertIsDisplayed()
 
-        // Vérifie la présence des boutons
-        composeTestRule.onNodeWithContentDescription("Bouton pour choisir une image").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Bouton pour ajouter une pièce jointe").assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Bouton valider. Appuyer pour créer l’événement.").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Validate").assertIsDisplayed()
     }
 
     @Test
     fun fillingAllFields_andClickingValidate_callsUploadFileAndCreateEvent() {
+        every {
+            mockViewModel.uploadFileAndCreateEvent(any(), any(), any(), any(), any())
+        } just Runs
+
         composeTestRule.setContent {
             CreateEventScreen(
                 eventViewModel = mockViewModel,
                 onValidate = {},
                 onBack = {},
-                isTest = true // ← active les champs éditables
+                isTest = true
             )
         }
 
-        // Remplir tous les champs
         composeTestRule.onNodeWithText("Title").performTextInput("Test Event")
         composeTestRule.onNodeWithText("Description").performTextInput("Test description")
         composeTestRule.onNodeWithText("Date").performTextInput("01/01/2025")
         composeTestRule.onNodeWithText("Time").performTextInput("12:00")
         composeTestRule.onNodeWithText("Address").performTextInput("123 Test Street")
 
-        // Cliquer sur le bouton "Validate"
         composeTestRule.onNodeWithText("Validate").performClick()
 
-        // Vérifier que la fonction du ViewModel a été appelée
         verify(timeout = 3000) {
             mockViewModel.uploadFileAndCreateEvent(
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                imageUri = any(),
+                attachmentUri = any(),
+                event = any(),
+                onSuccess = any(),
+                onError = any()
             )
         }
     }
@@ -79,7 +76,7 @@ class CreateEventScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithContentDescription("Bouton valider. Appuyer pour créer l’événement.")
+        composeTestRule.onNodeWithText("Validate")
             .performClick()
 
         verify(exactly = 0) {

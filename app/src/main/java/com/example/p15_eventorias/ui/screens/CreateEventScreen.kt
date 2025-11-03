@@ -97,7 +97,8 @@ fun CreateEventScreen(
                             onValidate,
                             onLoadingChange = { isLoading = it }
                         )
-                    }
+                    },
+                    isTest = isTest
                 )
             }
         }
@@ -142,7 +143,8 @@ private fun CreateEventForm(
     attachmentUri: Uri?, onAttachmentChange: (Uri?) -> Unit,
     imagePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
     filePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    isTest: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -153,7 +155,7 @@ private fun CreateEventForm(
     ) {
         EventTextField("Title", title, onTitleChange)
         EventTextField("Description", description, onDescriptionChange)
-        DateTimePickerRow(date, onDateChange, time, onTimeChange)
+        DateTimePickerRow(date, onDateChange, time, onTimeChange, isTest = isTest)
         EventTextField("Address", address, onAddressChange)
         FilePickersRow(imagePickerLauncher, filePickerLauncher, imageUri, onImageChange)
         imageUri?.let { AsyncImage(model = it, contentDescription = "Preview", modifier = Modifier.fillMaxWidth().height(200.dp), contentScale = ContentScale.Crop) }

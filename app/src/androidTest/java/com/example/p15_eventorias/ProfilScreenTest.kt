@@ -44,23 +44,24 @@ class ProfileScreenTest {
                 authViewModel = mockAuthViewModel,
                 notificationsViewModel = mockNotifViewModel,
                 onEventsList = {},
-                onLogout = {}
+                onLogout = {},
+                isTest = true
             )
         }
 
-        // Vérifie le titre
+        // Vérifie le titre du screen
         composeTestRule
-            .onNodeWithContentDescription("Titre de l'écran : Profil utilisateur")
+            .onNodeWithContentDescription("Écran de profil utilisateur")
             .assertExists()
 
         // Vérifie nom utilisateur
         composeTestRule
-            .onNodeWithContentDescription("Nom de l’utilisateur : Jean Dupont")
+            .onNode(hasText("Jean Dupont"))
             .assertExists()
 
         // Vérifie email
         composeTestRule
-            .onNodeWithContentDescription("Adresse email de l’utilisateur : jean.dupont@example.com")
+            .onNode(hasText("jean.dupont@example.com"))
             .assertExists()
     }
 
@@ -72,12 +73,14 @@ class ProfileScreenTest {
                 authViewModel = mockAuthViewModel,
                 notificationsViewModel = mockNotifViewModel,
                 onEventsList = {},
-                onLogout = {}
+                onLogout = {},
+                isTest = true
             )
         }
 
+        // Clique sur le bouton de logout
         composeTestRule
-            .onNodeWithContentDescription("Bouton de déconnexion. Appuyer pour se déconnecter du compte.")
+            .onNode(hasText("Logout"))
             .performClick()
 
         verify { mockAuthViewModel.signOut() }
@@ -97,17 +100,17 @@ class ProfileScreenTest {
             )
         }
 
-        composeTestRule.onNodeWithTag("notif_switch")
+        // Active la notification
+        composeTestRule.onNode(isToggleable())
             .performClick()
-
         verify { mockNotifViewModel.enableNotifications() }
 
         notificationsState.value = true
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag("notif_switch")
+        // Désactive la notification
+        composeTestRule.onNode(isToggleable())
             .performClick()
-
         verify { mockNotifViewModel.disableNotifications() }
     }
 
@@ -119,16 +122,19 @@ class ProfileScreenTest {
                 authViewModel = mockAuthViewModel,
                 notificationsViewModel = mockNotifViewModel,
                 onEventsList = {},
-                onLogout = {}
+                onLogout = {},
+                isTest = true
             )
         }
 
+        // Onglet Events
         composeTestRule
-            .onNodeWithContentDescription("Onglet Événements. Appuyer pour revenir à la liste des événements.")
+            .onNode(hasText("Events") and isNotSelected())
             .assertExists()
 
+        // Onglet Profile sélectionné
         composeTestRule
-            .onNodeWithContentDescription("Onglet Profil sélectionné")
+            .onNode(hasText("Profile") and isSelected())
             .assertExists()
     }
 }
