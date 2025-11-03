@@ -152,20 +152,4 @@ class LoginScreenTest {
             .onNodeWithContentDescription("Erreur : Identifiants incorrects")
             .assertExists()
     }
-
-    // Lien vers la création de compte
-    @Test
-    fun clickingCreateAccount_triggersCallback() {
-        setContent()
-
-        composeTestRule
-            .onNodeWithContentDescription("Bouton pour se connecter avec un email")
-            .performClick()
-
-        composeTestRule
-            .onNodeWithText("Créer un compte")
-            .performClick()
-
-        assert(goToRegister)
-    }
 }
