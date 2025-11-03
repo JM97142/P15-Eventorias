@@ -1,6 +1,7 @@
 package com.example.p15_eventorias.ui.screens
 
 import android.os.Build
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -28,7 +29,6 @@ import com.example.p15_eventorias.ui.viewmodels.AuthViewModel
 import com.example.p15_eventorias.ui.viewmodels.NotificationsViewModel
 import com.google.firebase.auth.FirebaseUser
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     user: FirebaseUser?,
@@ -43,207 +43,185 @@ fun ProfileScreen(
     var userName by remember { mutableStateOf(user?.displayName ?: "") }
     var userPhotoUrl by remember { mutableStateOf(user?.photoUrl?.toString()) }
 
-    // Récupération du profil Firestore (si email/password)
     LaunchedEffect(user?.uid) {
         user?.uid?.let { uid ->
-            authViewModel.getUserByUid(uid) { url ->
-                userPhotoUrl = url
-            }
-            authViewModel.getUserNameByUid(uid) { name ->
-                if (!name.isNullOrBlank()) userName = name
-            }
+            authViewModel.getUserByUid(uid) { url -> userPhotoUrl = url }
+            authViewModel.getUserNameByUid(uid) { name -> if (!name.isNullOrBlank()) userName = name }
         }
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) {
-            notificationsViewModel.enableNotifications()
-        } else {
-            notificationsViewModel.disableNotifications()
-        }
+        handleNotificationPermission(isGranted, notificationsViewModel)
     }
 
     Scaffold(
-        modifier = Modifier.semantics {
-            contentDescription = "Écran de profil utilisateur"
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.profil),
-                        color = Color.White,
-                        modifier = Modifier.semantics {
-                            contentDescription = "Titre de l'écran : Profil utilisateur"
-                        }
-                    )
-                },
-                actions = {
-                    AsyncImage(
-                        model = userPhotoUrl,
-                        contentDescription = stringResource(R.string.profil_picture),
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .semantics {
-                                contentDescription = "Photo de profil de l’utilisateur"
-                            }
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1D1B20),
-                    titleContentColor = Color.White
-                )
-            )
-        },
-        bottomBar = {
-            NavigationBar(
-                containerColor = Color(0xFF1D1B20),
-                contentColor = Color.White,
-                modifier = Modifier.semantics {
-                    contentDescription = "Barre de navigation du profil"
-                }
-            ) {
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onEventsList,
-                    label = { Text("Events") },
-                    icon = { Icon(Icons.Default.DateRange, null) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        selectedTextColor = Color.White,
-                        unselectedTextColor = Color.White,
-                        indicatorColor = Color.Gray
-                    ),
-                    modifier = Modifier.semantics {
-                        contentDescription = "Onglet Événements. Appuyer pour revenir à la liste des événements."
-                    }
-                )
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    label = { Text("Profile") },
-                    icon = { Icon(Icons.Default.Person, null) },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.White,
-                        selectedTextColor = Color.White,
-                        unselectedTextColor = Color.White,
-                        indicatorColor = Color.Gray
-                    ),
-                    modifier = Modifier.semantics {
-                        contentDescription = "Onglet Profil sélectionné"
-                    }
-                )
-            }
-        }
+        modifier = Modifier.semantics { contentDescription = "Écran de profil utilisateur" },
+        topBar = { ProfileTopBar(userPhotoUrl) },
+        bottomBar = { ProfileBottomBar(onEventsList) }
     ) { padding ->
-        Column(
+        ProfileContent(
+            userName = userName,
+            userEmail = user?.email,
+            notificationsEnabled = notificationsEnabled,
+            permissionLauncher = permissionLauncher,
+            notificationsViewModel = notificationsViewModel,
+            onLogout = {
+                authViewModel.signOut()
+                onLogout()
+            },
+            isTest = isTest,
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF1D1B20))
                 .padding(padding)
                 .padding(16.dp)
-                .semantics {
-                    contentDescription = "Informations de profil de l’utilisateur"
-                },
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            OutlinedTextField(
-                value = userName,
-                onValueChange = {},
-                label = { Text(stringResource(id = R.string.user_name)) },
-                enabled = false,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ProfileTopBar(userPhotoUrl: String?) {
+    TopAppBar(
+        title = { Text(stringResource(R.string.profil), color = Color.White) },
+        actions = {
+            AsyncImage(
+                model = userPhotoUrl,
+                contentDescription = stringResource(R.string.profil_picture),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics {
-                        contentDescription = "Nom de l’utilisateur : $userName"
-                    },
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = Color.White,
-                    disabledLabelColor = Color.White,
-                    disabledIndicatorColor = Color.Gray,
-                    disabledContainerColor = Color.DarkGray
-                )
+                    .size(48.dp)
+                    .clip(CircleShape)
             )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF1D1B20),
+            titleContentColor = Color.White
+        )
+    )
+}
 
-            OutlinedTextField(
-                value = user?.email ?: "",
-                onValueChange = {},
-                label = { Text(stringResource(id = R.string.email)) },
-                enabled = false,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .semantics {
-                        contentDescription = "Adresse email de l’utilisateur : ${user?.email ?: "Non disponible"}"
-                    },
-                colors = TextFieldDefaults.colors(
-                    disabledTextColor = Color.White,
-                    disabledLabelColor = Color.White,
-                    disabledIndicatorColor = Color.Gray,
-                    disabledContainerColor = Color.DarkGray
-                )
+@Composable
+private fun ProfileBottomBar(onEventsList: () -> Unit) {
+    NavigationBar(containerColor = Color(0xFF1D1B20), contentColor = Color.White) {
+        NavigationBarItem(
+            selected = false,
+            onClick = onEventsList,
+            label = { Text("Events") },
+            icon = { Icon(Icons.Default.DateRange, null) }
+        )
+        NavigationBarItem(
+            selected = true,
+            onClick = {},
+            label = { Text("Profile") },
+            icon = { Icon(Icons.Default.Person, null) }
+        )
+    }
+}
+
+@Composable
+private fun ProfileContent(
+    userName: String,
+    userEmail: String?,
+    notificationsEnabled: Boolean,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+    notificationsViewModel: NotificationsViewModel,
+    onLogout: () -> Unit,
+    isTest: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        DisabledTextField(label = stringResource(R.string.user_name), value = userName)
+        DisabledTextField(label = stringResource(R.string.email), value = userEmail ?: "")
+
+        LogoutButton(onLogout = onLogout)
+
+        NotificationRow(
+            notificationsEnabled = notificationsEnabled,
+            permissionLauncher = permissionLauncher,
+            notificationsViewModel = notificationsViewModel,
+            isTest = isTest
+        )
+    }
+}
+
+@Composable
+private fun DisabledTextField(label: String, value: String) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = {},
+        label = { Text(label) },
+        enabled = false,
+        modifier = Modifier.fillMaxWidth(),
+        colors = TextFieldDefaults.colors(
+            disabledTextColor = Color.White,
+            disabledLabelColor = Color.White,
+            disabledIndicatorColor = Color.Gray,
+            disabledContainerColor = Color.DarkGray
+        )
+    )
+}
+
+@Composable
+private fun LogoutButton(onLogout: () -> Unit) {
+    Button(
+        onClick = onLogout,
+        modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White),
+        shape = RoundedCornerShape(3.dp)
+    ) {
+        Text(stringResource(id = R.string.logout))
+    }
+}
+
+@Composable
+private fun NotificationRow(
+    notificationsEnabled: Boolean,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+    notificationsViewModel: NotificationsViewModel,
+    isTest: Boolean
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Switch(
+            checked = notificationsEnabled,
+            onCheckedChange = { isChecked ->
+                handleNotificationToggle(isChecked, notificationsViewModel, permissionLauncher, isTest)
+            },
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Color.Red
             )
+        )
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(id = R.string.notifications), color = Color.White)
+    }
+}
 
-            Spacer(Modifier.height(16.dp))
-            // Bouton Logout
-            Button(
-                onClick = {
-                    authViewModel.signOut()
-                    onLogout()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .width(242.dp)
-                    .semantics {
-                        contentDescription = "Bouton de déconnexion. Appuyer pour se déconnecter du compte."
-                    },
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = Color.White,
-                    containerColor = Color.Red
-                ),
-                shape = RoundedCornerShape(3.dp)
-            ) {
-                Text(stringResource(id = R.string.logout))
-            }
+private fun handleNotificationPermission(
+    isGranted: Boolean,
+    notificationsViewModel: NotificationsViewModel
+) {
+    if (isGranted) notificationsViewModel.enableNotifications()
+    else notificationsViewModel.disableNotifications()
+}
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.semantics {
-                    contentDescription = if (notificationsEnabled)
-                        "Notifications activées. Appuyer pour les désactiver."
-                    else
-                        "Notifications désactivées. Appuyer pour les activer."
-                }
-            ) {
-                Switch(
-                    modifier = Modifier.testTag("notif_switch"),
-                    checked = notificationsEnabled,
-                    onCheckedChange = { isChecked ->
-                        if (isChecked) {
-                            if (!isTest && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                            } else {
-                                notificationsViewModel.enableNotifications()
-                            }
-                        } else {
-                            notificationsViewModel.disableNotifications()
-                        }
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = Color.White,
-                        checkedTrackColor = Color.Red
-                    )
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    stringResource(id = R.string.notifications),
-                    color = Color.White
-                )
-            }
+private fun handleNotificationToggle(
+    isChecked: Boolean,
+    notificationsViewModel: NotificationsViewModel,
+    permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+    isTest: Boolean
+) {
+    if (isChecked) {
+        if (!isTest && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            notificationsViewModel.enableNotifications()
         }
+    } else {
+        notificationsViewModel.disableNotifications()
     }
 }

@@ -1,7 +1,9 @@
 package com.example.p15_eventorias.ui.screens
 
+import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -30,7 +32,6 @@ import com.example.p15_eventorias.ui.viewmodels.EventViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventScreen(
     eventViewModel: EventViewModel,
@@ -38,22 +39,18 @@ fun CreateEventScreen(
     onBack: () -> Unit,
     isTest: Boolean = false
 ) {
+    val context = LocalContext.current
+    val currentUserUid = Firebase.auth.currentUser?.uid ?: "test_uid"
+
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
-
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var attachmentUri by remember { mutableStateOf<Uri?>(null) }
-
     var isLoading by remember { mutableStateOf(false) }
 
-    val currentUserUid = Firebase.auth.currentUser?.uid ?: "test_uid"
-
-    val context = LocalContext.current
-
-    // Launchers
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? -> imageUri = uri }
@@ -63,223 +60,185 @@ fun CreateEventScreen(
     ) { uri: Uri? -> attachmentUri = uri }
 
     Scaffold(
-        modifier = Modifier.semantics {
-            contentDescription = "Écran de création d’un nouvel événement"
-        },
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.create_event)) },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.semantics {
-                            contentDescription = "Bouton retour. Appuyer pour revenir à la liste des événements."
-                        }
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.arrow_back),
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF1D1B20),
-                    titleContentColor = Color.White
-                )
-            )
-        }
+        modifier = Modifier.semantics { contentDescription = "Écran de création d’un nouvel événement" },
+        topBar = { CreateEventTopBar(onBack) }
     ) { padding ->
-        if (isLoading) {
-            // Loader
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .background(Color(0xFF1D1B20))
-                    .semantics { contentDescription = "Chargement en cours" },
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Color.Red)
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .background(Color(0xFF1D1B20))
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .semantics { contentDescription = "Formulaire de création d’événement" },
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
-                    label = { Text("Title") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics { contentDescription = "Champ de texte : titre de l’événement" },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.Gray,
-                    )
-                )
-
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Description") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics { contentDescription = "Champ de texte : description de l’événement" },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.Gray,
-                    )
-                )
-
-                DateTimePickerRow(
-                    date = date,
-                    onDateChange = { date = it },
-                    time = time,
-                    onTimeChange = { time = it },
-                    isTest = isTest
-                )
-
-                OutlinedTextField(
-                    value = address,
-                    onValueChange = { address = it },
-                    label = { Text("Address") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics { contentDescription = "Champ de texte : adresse de l’événement" },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        focusedLabelColor = Color.White,
-                        unfocusedLabelColor = Color.Gray,
-                    )
-                )
-
-                // Boutons
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .semantics { contentDescription = "Boutons pour ajouter une image ou une pièce jointe" },
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(
-                        onClick = { imagePickerLauncher.launch("image/*") },
-                        modifier = Modifier
-                            .size(52.dp)
-                            .background(Color.White, shape = RoundedCornerShape(12.dp))
-                            .semantics { contentDescription = "Bouton pour choisir une image" }
-                    ) {
-                        Icon(
-                            Icons.Default.AddAPhoto,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-
-                    Spacer(Modifier.width(16.dp))
-
-                    IconButton(
-                        onClick = { filePickerLauncher.launch("*/*") },
-                        modifier = Modifier
-                            .size(52.dp)
-                            .background(Color.Red, shape = RoundedCornerShape(12.dp))
-                            .semantics { contentDescription = "Bouton pour ajouter une pièce jointe" }
-                    ) {
-                        Icon(
-                            Icons.Default.AttachFile,
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
-                }
-
-                // preview image
-                imageUri?.let {
-                    AsyncImage(
-                        model = it,
-                        contentDescription = "Preview",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .semantics { contentDescription = "Aperçu de l’image sélectionnée" },
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                Spacer(Modifier.weight(1f))
-
-                // Save event
-                Button(
-                    onClick = {
-                        if (title.isBlank() || description.isBlank() || date.isBlank() || time.isBlank() || address.isBlank()) {
-                            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT)
-                                .show()
-                            return@Button
-                        }
-
-                        isLoading = true
-
-                        val geocoder = android.location.Geocoder(context)
-                        var latitude: Double? = null
-                        var longitude: Double? = null
-
-                        try {
-                            val results = geocoder.getFromLocationName(address, 1)?.toList()
-                            if (!results.isNullOrEmpty()) {
-                                latitude = results[0].latitude
-                                longitude = results[0].longitude
-                            }
-                        } catch (e: Exception) {
-                            Toast.makeText(
-                                context,
-                                "Impossible de localiser l'adresse",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        val event = Event(
-                            title = title,
-                            description = description,
-                            date = date,
-                            time = time,
-                            address = address,
-                            latitude = latitude,
-                            longitude = longitude,
-                            creatorUid = currentUserUid
-                        )
-                        eventViewModel.uploadFileAndCreateEvent(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFF1D1B20))
+        ) {
+            if (isLoading) {
+                Loader()
+            } else {
+                CreateEventForm(
+                    title, { title = it },
+                    description, { description = it },
+                    date, { date = it },
+                    time, { time = it },
+                    address, { address = it },
+                    imageUri, { imageUri = it },
+                    attachmentUri, { attachmentUri = it },
+                    imagePickerLauncher,
+                    filePickerLauncher,
+                    onSave = {
+                        handleSaveEvent(
+                            context,
+                            title,
+                            description,
+                            date,
+                            time,
+                            address,
                             imageUri,
                             attachmentUri,
-                            event,
-                            onSuccess = onValidate,
-                            onError = { e ->
-                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT)
-                                    .show()
-                            }
+                            currentUserUid,
+                            eventViewModel,
+                            onValidate,
+                            onLoadingChange = { isLoading = it }
                         )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics { contentDescription = "Bouton valider. Appuyer pour créer l’événement." },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    ),
-                    shape = RoundedCornerShape(3.dp)
-                ) {
-                    Text(stringResource(id = R.string.validate))
-                }
+                    }
+                )
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CreateEventTopBar(onBack: () -> Unit) {
+    TopAppBar(
+        title = { Text(stringResource(id = R.string.create_event)) },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF1D1B20),
+            titleContentColor = Color.White
+        )
+    )
+}
+
+@Composable
+private fun Loader() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = Color.Red)
+    }
+}
+
+@Composable
+private fun CreateEventForm(
+    title: String, onTitleChange: (String) -> Unit,
+    description: String, onDescriptionChange: (String) -> Unit,
+    date: String, onDateChange: (String) -> Unit,
+    time: String, onTimeChange: (String) -> Unit,
+    address: String, onAddressChange: (String) -> Unit,
+    imageUri: Uri?, onImageChange: (Uri?) -> Unit,
+    attachmentUri: Uri?, onAttachmentChange: (Uri?) -> Unit,
+    imagePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    filePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    onSave: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .semantics { contentDescription = "Formulaire de création d’événement" },
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        EventTextField("Title", title, onTitleChange)
+        EventTextField("Description", description, onDescriptionChange)
+        DateTimePickerRow(date, onDateChange, time, onTimeChange)
+        EventTextField("Address", address, onAddressChange)
+        FilePickersRow(imagePickerLauncher, filePickerLauncher, imageUri, onImageChange)
+        imageUri?.let { AsyncImage(model = it, contentDescription = "Preview", modifier = Modifier.fillMaxWidth().height(200.dp), contentScale = ContentScale.Crop) }
+        Spacer(Modifier.weight(1f))
+        Button(onClick = onSave, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)) {
+            Text(stringResource(id = R.string.validate))
+        }
+    }
+}
+
+@Composable
+private fun EventTextField(label: String, value: String, onValueChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth(),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedLabelColor = Color.White,
+            unfocusedLabelColor = Color.Gray,
+        )
+    )
+}
+
+@Composable
+private fun FilePickersRow(
+    imagePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    filePickerLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    imageUri: Uri?, onImageChange: (Uri?) -> Unit
+) {
+    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+        IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
+            Icon(Icons.Default.AddAPhoto, contentDescription = null)
+        }
+        Spacer(Modifier.width(16.dp))
+        IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
+            Icon(Icons.Default.AttachFile, contentDescription = null)
+        }
+    }
+}
+
+private fun handleSaveEvent(
+    context: Context,
+    title: String,
+    description: String,
+    date: String,
+    time: String,
+    address: String,
+    imageUri: Uri?,
+    attachmentUri: Uri?,
+    currentUserUid: String,
+    eventViewModel: EventViewModel,
+    onValidate: () -> Unit,
+    onLoadingChange: (Boolean) -> Unit
+) {
+    if (listOf(title, description, date, time, address).any { it.isBlank() }) {
+        Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    onLoadingChange(true)
+
+    val geocoder = android.location.Geocoder(context)
+    var latitude: Double? = null
+    var longitude: Double? = null
+
+    try {
+        geocoder.getFromLocationName(address, 1)?.firstOrNull()?.let {
+            latitude = it.latitude
+            longitude = it.longitude
+        }
+    } catch (_: Exception) {
+        Toast.makeText(context, "Impossible de localiser l'adresse", Toast.LENGTH_SHORT).show()
+    }
+
+    val event = Event(title, description, date, time, address,
+        latitude.toString(), longitude.toString(), currentUserUid)
+
+    eventViewModel.uploadFileAndCreateEvent(
+        imageUri,
+        attachmentUri,
+        event,
+        onSuccess = onValidate,
+        onError = { e -> Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show() }
+    )
 }
