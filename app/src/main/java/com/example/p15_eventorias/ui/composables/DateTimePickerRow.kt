@@ -56,9 +56,9 @@ fun DateTimePickerRow(
                             val selectedDate = "${dayOfMonth}/${month + 1}/$year"
                             onDateChange(selectedDate)
                         },
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
+                        calendar[Calendar.YEAR],
+                        calendar[Calendar.MONTH],
+                        calendar[Calendar.DAY_OF_MONTH]
                     ).show()
                 }) {
                     Icon(Icons.Default.DateRange, contentDescription = "Pick Date")
@@ -88,8 +88,8 @@ fun DateTimePickerRow(
                             val formattedTime = String.format("%02d:%02d", hour, minute)
                             onTimeChange(formattedTime)
                         },
-                        calendar.get(Calendar.HOUR_OF_DAY),
-                        calendar.get(Calendar.MINUTE),
+                        calendar[Calendar.HOUR_OF_DAY],
+                        calendar[Calendar.MINUTE],
                         true
                     ).show()
                 }) {
