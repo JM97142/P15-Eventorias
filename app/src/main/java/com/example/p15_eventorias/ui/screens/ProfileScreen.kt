@@ -89,10 +89,11 @@ private fun ProfileTopBar(userPhotoUrl: String?) {
         actions = {
             AsyncImage(
                 model = userPhotoUrl,
-                contentDescription = stringResource(R.string.profil_picture),
+                contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
+                    .testTag("ProfilePicture")
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -194,7 +195,8 @@ private fun NotificationRow(
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
                 checkedTrackColor = Color.Red
-            )
+            ),
+            modifier = Modifier.testTag("NotificationSwitch")
         )
         Spacer(Modifier.width(8.dp))
         Text(stringResource(id = R.string.notifications), color = Color.White)

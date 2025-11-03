@@ -137,4 +137,75 @@ class ProfileScreenTest {
             .onNode(hasText("Profile") and isSelected())
             .assertExists()
     }
+
+    @Test
+    fun profileScreen_displaysUserProfilePicture() {
+        composeTestRule.setContent {
+            ProfileScreen(
+                user = mockUser,
+                authViewModel = mockAuthViewModel,
+                notificationsViewModel = mockNotifViewModel,
+                onEventsList = {},
+                onLogout = {},
+                isTest = true
+            )
+        }
+
+        composeTestRule
+            .onNodeWithContentDescription("Profile picture")
+            .assertExists()
+    }
+
+    @Test
+    fun profileScreen_clickEventsTab_callsOnEventsList() {
+        var eventsClicked = false
+
+        composeTestRule.setContent {
+            ProfileScreen(
+                user = mockUser,
+                authViewModel = mockAuthViewModel,
+                notificationsViewModel = mockNotifViewModel,
+                onEventsList = { eventsClicked = true },
+                onLogout = {},
+                isTest = true
+            )
+        }
+
+        composeTestRule
+            .onNode(hasText("Events") and hasClickAction())
+            .performClick()
+
+        assert(eventsClicked)
+    }
+
+    @Test
+    fun profileScreen_notificationsSwitch_isDisplayed_andToggleable() {
+        composeTestRule.setContent {
+            ProfileScreen(
+                user = mockUser,
+                authViewModel = mockAuthViewModel,
+                notificationsViewModel = mockNotifViewModel,
+                onEventsList = {},
+                onLogout = {},
+                isTest = true
+            )
+        }
+
+        val switch = composeTestRule.onNodeWithTag("NotificationSwitch")
+
+        // Vérifie que le switch est présent et éteint au départ
+        switch.assertExists()
+        switch.assertIsOff()
+
+        // Active
+        switch.performClick()
+        verify { mockNotifViewModel.enableNotifications() }
+
+        // Simule la mise à jour du flow côté ViewModel
+        notificationsState.value = true
+        composeTestRule.waitForIdle()
+
+        // Vérifie qu’il est maintenant allumé
+        switch.assertIsOn()
+    }
 }

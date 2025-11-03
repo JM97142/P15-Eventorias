@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -128,7 +129,10 @@ private fun Loader() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(color = Color.Red)
+        CircularProgressIndicator(
+            modifier = Modifier.semantics { contentDescription = "Loader" },
+            color = Color.Red
+        )
     }
 }
 
@@ -189,11 +193,17 @@ private fun FilePickersRow(
     imageUri: Uri?, onImageChange: (Uri?) -> Unit
 ) {
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-        IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
+        IconButton(
+            modifier = Modifier.testTag("AddPhotoIcon"),
+            onClick = { imagePickerLauncher.launch("image/*") }
+        ) {
             Icon(Icons.Default.AddAPhoto, contentDescription = null)
         }
         Spacer(Modifier.width(16.dp))
-        IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
+        IconButton(
+            modifier = Modifier.testTag("AttachFileIcon"),
+            onClick = { filePickerLauncher.launch("*/*") }
+        ) {
             Icon(Icons.Default.AttachFile, contentDescription = null)
         }
     }

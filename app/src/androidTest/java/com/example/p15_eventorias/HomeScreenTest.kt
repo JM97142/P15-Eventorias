@@ -101,4 +101,116 @@ class HomeScreenTest {
 
         assert(clickedEvent?.title == "Conference")
     }
+
+    @Test
+    fun homeScreen_navigationBar_displaysItems() {
+        val fakeVM = FakeEventViewModel(fakeEvents())
+
+        composeTestRule.setContent {
+            HomeScreen(
+                eventViewModel = fakeVM,
+                onAddEvent = {},
+                onProfile = {},
+                onEventClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Barre de navigation principale")
+            .assertExists()
+
+        composeTestRule.onNodeWithContentDescription("Onglet Événements sélectionné")
+            .assertExists()
+            .assertIsSelected()
+
+        composeTestRule.onNodeWithContentDescription(
+            "Onglet Profil. Appuyer pour afficher les informations du profil utilisateur"
+        ).assertExists()
+    }
+
+    @Test
+    fun homeScreen_fabAddEvent_callsOnAddEvent() {
+        val fakeVM = FakeEventViewModel(fakeEvents())
+        var clicked = false
+
+        composeTestRule.setContent {
+            HomeScreen(
+                eventViewModel = fakeVM,
+                onAddEvent = { clicked = true },
+                onProfile = {},
+                onEventClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Bouton pour ajouter un nouvel événement")
+            .performClick()
+
+        assert(clicked)
+    }
+
+    @Test
+    fun homeScreen_searchEvents_filtersListCorrectly() {
+        val fakeVM = FakeEventViewModel(fakeEvents())
+
+        composeTestRule.setContent {
+            HomeScreen(
+                eventViewModel = fakeVM,
+                onAddEvent = {},
+                onProfile = {},
+                onEventClick = {}
+            )
+        }
+
+        // Ouvre la recherche
+        composeTestRule.onNodeWithContentDescription("Ouvrir la recherche d'événements")
+            .performClick()
+
+        val searchField = composeTestRule.onNodeWithContentDescription(
+            "Champ de recherche pour filtrer les événements par titre"
+        )
+
+        searchField.performTextInput("conference")
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Conference", substring = true).assertExists()
+        composeTestRule.onNodeWithText("Concert", substring = true).assertDoesNotExist()
+        composeTestRule.onNodeWithText("Workshop", substring = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun homeScreen_noEvents_showsEmptyState() {
+        val fakeVM = FakeEventViewModel(emptyList())
+
+        composeTestRule.setContent {
+            HomeScreen(
+                eventViewModel = fakeVM,
+                onAddEvent = {},
+                onProfile = {},
+                onEventClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Aucun événement disponible pour le moment")
+            .assertExists()
+    }
+
+    @Test
+    fun homeScreen_navigationBar_profileItem_callsOnProfile() {
+        val fakeVM = FakeEventViewModel(fakeEvents())
+        var profileClicked = false
+
+        composeTestRule.setContent {
+            HomeScreen(
+                eventViewModel = fakeVM,
+                onAddEvent = {},
+                onProfile = { profileClicked = true },
+                onEventClick = {}
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription(
+            "Onglet Profil. Appuyer pour afficher les informations du profil utilisateur"
+        ).performClick()
+
+        assert(profileClicked)
+    }
 }

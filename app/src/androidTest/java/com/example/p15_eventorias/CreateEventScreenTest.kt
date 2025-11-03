@@ -83,4 +83,21 @@ class CreateEventScreenTest {
             mockViewModel.uploadFileAndCreateEvent(any(), any(), any(), any(), any())
         }
     }
+
+    @Test
+    fun dateTimeFields_acceptInput_whenIsTest() {
+        composeTestRule.setContent {
+            CreateEventScreen(
+                eventViewModel = mockViewModel,
+                onValidate = {},
+                onBack = {},
+                isTest = true
+            )
+        }
+
+        composeTestRule.onNodeWithText("Date").performTextInput("02/02/2026")
+        composeTestRule.onNodeWithText("Time").performTextInput("14:30")
+        composeTestRule.onNodeWithText("Date").assertTextContains("02/02/2026")
+        composeTestRule.onNodeWithText("Time").assertTextContains("14:30")
+    }
 }
