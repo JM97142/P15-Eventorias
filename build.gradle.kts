@@ -13,17 +13,11 @@ sonar {
         property("sonar.projectKey", "JM97142_P15-Eventorias")
         property("sonar.organization", "jm97142")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src/main/java")
-        property("sonar.tests", "src/test/java, src/androidTest/java")
+        property("sonar.sources", "src/main/java,src/main/kotlin")
+        property("sonar.tests", "src/test/java,src/test/kotlin")
         property("sonar.java.binaries", "${project.buildDir}/intermediates/javac/debug/classes")
         property("sonar.kotlin.binaries", "${project.buildDir}/tmp/kotlin-classes/debug")
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            "${project.buildDir}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml"
-        )
-        property(
-            "sonar.coverage.exclusions",
-            "**/R.class, **/R$*.class, **/BuildConfig.*, **/Manifest*.*, **/*Test*.*"
-        )
+        property("sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/jacocoUnitTestReport/jacocoUnitTestReport.xml")
+        property("sonar.coverage.exclusions", "**/R.class,**/R$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*")
     }
 }

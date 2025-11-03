@@ -35,8 +35,15 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Run unit tests with JaCoCo
-        run: ./gradlew clean testDebugUnitTest jacocoUnitTestReport --stacktrace
+      - name: Run unit tests and generate JaCoCo report (app module)
+        run: ./gradlew :app:clean :app:testDebugUnitTest :app:jacocoUnitTestReport --stacktrace
+
+      - name: Show generated jacoco report files (debug)
+        run: |
+          echo "Listing app/build/reports/jacoco:"
+          ls -la app/build/reports/jacoco || true
+          echo "Listing potential exec files under app/build:"
+          find app/build -type f -name "*.exec" -maxdepth 6 || true
 
       - name: Upload unit test coverage report
         uses: actions/upload-artifact@v4
@@ -44,14 +51,12 @@ jobs:
           name: unit-test-coverage-report
           path: app/build/reports/jacoco/jacocoUnitTestReport/
 
-      - name: SonarCloud Scan
-        if: ${{ github.actor != 'dependabot[bot]' }}
+      - name: SonarCloud Scan (app module)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./gradlew sonarqube \
-            -Dsonar.token="$SONAR_TOKEN" \
-            --stacktrace --info
+          # lancer la sonarqube au niveau du module app pour s'assurer que les chemins sont relatifs à app/
+          ./gradlew :app:sonarqube -Dsonar.token="$SONAR_TOKEN" --stacktrace --info
 
       - name: Verify SonarCloud Quality Gate
         if: ${{ github.actor != 'dependabot[bot]' }}
