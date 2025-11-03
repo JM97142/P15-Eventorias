@@ -106,7 +106,7 @@ tasks.register<JacocoReport>("jacocoUnitTestReport") {
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/jacocoUnitTestReport/html"))
     }
 
-    val mainSrc = files("src/main/java", "src/main/kotlin")
+    val mainSrc = files("src/main/java")
 
     val javaClasses = fileTree("build/intermediates/javac/debug/classes") {
         exclude("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*", "**/*Test*.*")
@@ -134,7 +134,7 @@ tasks.register<JacocoReport>("jacocoAndroidTestReport") {
         html.required.set(true)
         html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/jacocoAndroidTestReport/html"))
     }
-    val mainSrc = files("src/main/java", "src/main/kotlin")
+    val mainSrc = files("src/main/java")
     val javaClasses = fileTree("build/intermediates/javac/debug/classes") {
         exclude("**/R.class","**/R$*.class","**/BuildConfig.*","**/Manifest*.*","**/*Test*.*")
     }
